@@ -4,3 +4,4 @@
 * Some (most?) defines should be variables
 * Independent delays for row and col (both enemies and player)
 * Autoadjust delay for different screen sizes
+* Upload to github
