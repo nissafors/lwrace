@@ -1,6 +1,6 @@
 CC := gcc
 PROGRAM := lwrace
-CFLAGS := -Wall
+CFLAGS := -Wall -g
 LFLAGS := -lncurses
 OBJECTS := main.o player.o enemies.o treasures.o getnow.o genrand.o
 # Cygwin hides curses.h, must specify include path:

@@ -11,24 +11,28 @@
 #define ADD_ENEMY_SCORE_INTERVAL  5
 #define HIT                       1
 #define MISS                      0
+#define LOGIC_MIN_ROWQ            0.22
+#define LOGIC_MIN_COLQ            0.0625
+#define LOGIC_MAX_ROWQ            0.6
+#define LOGIC_MAX_COLQ            0.4
 #define PL_ADJ_MARGIN             5 /* Margin to corner if player were moved
-									   inside on screen size change. This is
-									   to avoid instant death if enemy also
-									   was moved to the same corner. */
+                                       inside on screen size change. This is
+                                       to avoid instant death if enemy also
+                                       was moved to the same corner. */
 
 /* Timers - Time is given in seconds */
 #define IMMORTAL_TIME             3
 #define PLAYER_DELAY              0.05 /* This is the delays when screen size */
 #define ENEMY_DELAY               0.1  /* is STDROWS * STDCOLS. It's auto-    */
 #define OBJECT_DELAY              0.05 /* adjusted if screen size is altered. */
-#define ENEMY_DELAY_DIFF          0.05 /* DIFF is added to ENEMY_DELAY for
+#define ENEMY_DELAY_DIFF          0.0  /* DIFF is added to ENEMY_DELAY for
                                           every new enemy compared to last
                                           added enemy */
 
 /* Screen size */
 #define STDROWS  23 /* Normal number of legal rows for gameplay.
-					   Rows+1 = status bar */
-#define STDCOLS  80	/* Normal number of columns for gameplay. */
+                       Rows+1 = status bar */
+#define STDCOLS  80 /* Normal number of columns for gameplay. */
 
 /* Symbols for players, targets and enemies etc */
 #define PLAYER      'O'
@@ -56,8 +60,8 @@
 
 /* Structs */
 struct pos {
-  int row;
-  int col;
+	int row;
+	int col;
 };
 
 /*** Prototypes ***/
