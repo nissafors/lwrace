@@ -59,7 +59,6 @@ int drawEnemies(struct pos playerPos, int score) {
 
 /* Supply logic and position updates for enemies */
 void hunt(struct pos *target, struct pos *hunter, int logic) {
-	double a;
 	extern int    Rows, Cols; /* Current screen size */
 	
 	/* There are 3 kinds of logic. Make sure we don't use numbers above that */
@@ -67,11 +66,18 @@ void hunt(struct pos *target, struct pos *hunter, int logic) {
 
 	/* Always use logic 0 if distance to player is less or more than specified
 	 * by LOGIC_MAXDIST and LOGIC_MINDIST */
-	if  ((double)abs(hunter->row - target->row) < LOGIC_MIN_ROWQ * (double)Rows
-	 ||  (double)abs(hunter->col - target->col) < LOGIC_MIN_COLQ * (double)Cols
-	 ||  (double)abs(hunter->row - target->row) > LOGIC_MAX_ROWQ * (double)Rows
-	 ||  (double)abs(hunter->col - target->col) > LOGIC_MAX_COLQ * (double)Cols
-	)
+	if  (
+			(
+			 	(double)abs(hunter->row - target->row) 
+				< LOGIC_MIN_ROWQ * (double)Rows
+				&& (double)abs(hunter->col - target->col)
+				< LOGIC_MIN_COLQ * (double)Cols
+			)
+			||  (double)abs(hunter->row - target->row)
+				> LOGIC_MAX_ROWQ * (double)Rows
+			||  (double)abs(hunter->col - target->col)
+				> LOGIC_MAX_COLQ * (double)Cols
+		)
 		logic = 0;
 
 	if (logic == 1) {

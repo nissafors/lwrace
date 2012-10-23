@@ -11,14 +11,17 @@
 #define ADD_ENEMY_SCORE_INTERVAL  5
 #define HIT                       1
 #define MISS                      0
-#define LOGIC_MIN_ROWQ            0.22
-#define LOGIC_MIN_COLQ            0.0625
-#define LOGIC_MAX_ROWQ            0.6
-#define LOGIC_MAX_COLQ            0.4
 #define PL_ADJ_MARGIN             5 /* Margin to corner if player were moved
                                        inside on screen size change. This is
                                        to avoid instant death if enemy also
                                        was moved to the same corner. */
+
+/* Enemy logic. The distance interval in which hunt logic other than default
+ * will be used given in proportion of screen size (rows and columns). */
+#define LOGIC_MIN_ROWQ            0.22
+#define LOGIC_MIN_COLQ            0.0625
+#define LOGIC_MAX_ROWQ            0.44
+#define LOGIC_MAX_COLQ            0.375
 
 /* Timers - Time is given in seconds */
 #define IMMORTAL_TIME             3
