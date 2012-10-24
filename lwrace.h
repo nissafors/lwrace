@@ -4,9 +4,13 @@
 #define DOWN                      2
 #define LEFT                      3
 #define RIGHT                     4
-#define PAUSE                     5
-#define INIT                      6
-#define EXIT                     -1
+#define NE                        5
+#define NW                        6
+#define SE                        7
+#define SW                        8
+#define PAUSE                     9
+#define INIT                     -1
+#define EXIT                     -2
 #define MAX_ENEMIES               3
 #define ADD_ENEMY_SCORE_INTERVAL  5
 #define HIT                       1
@@ -67,6 +71,9 @@ struct pos {
 	int col;
 };
 
+/* Typedefs */
+typedef int dir_t;      /* Direction */
+
 /*** Prototypes ***/
 /* player.c */
 int getdir();
@@ -74,7 +81,9 @@ struct pos getPos(struct pos, int);
 struct pos drawPlayer(int, struct pos);
 /* enemies.c */
 int drawEnemies(struct pos, int);
-void hunt(struct pos *, struct pos *, int);
+dir_t hunt(struct pos *, struct pos *, int);
+/* setpos.c */
+int setpos(dir_t, struct pos *, double *, double *);
 /* treasures.c */
 int treasures(struct pos);
 /* getnow.c */

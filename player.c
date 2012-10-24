@@ -26,40 +26,16 @@ int getdir(int curdir) {
 	return curdir;  /* No valid keys pressed, return current direction */
 }
 
-/* Return new position based on direction dir and current position curPos */
-struct pos getPos(struct pos curPos, int dir) {
-	extern int Rows, Cols;
-
-	switch (dir) {
-		case UP:
-			if (--curPos.row < 0)
-				curPos.row = 0;
-			break;
-		case DOWN:
-			if (++curPos.row >= Rows-1)
-				curPos.row = Rows-1;
-			break;
-		case LEFT:
-			if (--curPos.col < 0)
-				curPos.col = 0;
-			break;
-		case RIGHT:
-			if (++curPos.col >= Cols-1)
-				curPos.col = Cols-1;
-			break;
-	}
-	return curPos;
-}
-
 /* Draw player. "dir" is the direction in which player is moving. Return
  * players new position. */
 struct pos drawPlayer(int dir, struct pos curpos) {
 	extern int Rows, Cols;
 	static double lasttime;
 	struct pos newpos;
+	double delay = PLAYER_DELAY;
 
-	if (getnow() - lasttime > PLAYER_DELAY) {
-		newpos = getPos(curpos, dir);       /* Get new position based on dir */
+	newpos = curpos;
+	if (setpos(dir, &newpos, &delay, &lasttime)) {
 		if (newpos.row > Rows)              /* Player may be off screen if   */
 			newpos.row = Rows - PL_ADJ_MARGIN;  /* screen size changed. Move */
 		if (newpos.col > Cols)              /* inside with a margin to avoid */

@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <stdlib.h>     /* For NULL */
 #include <sys/time.h>
 
 /* Generate randon integer between, or equal to, min and max. Needs stdlib.h
