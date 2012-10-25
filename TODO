@@ -2,7 +2,6 @@
 * Write function for falling objects
 * Write functions to display and store high scores
 * Write intro?
-* Some (most?) defines should be variables
-* Independent delays for row and col (both enemies and player)
-* Autoadjust delay for different screen sizes
+* Some defines should be variables (delays, keys, number of enemies, etc)
 * Take som command line arguments (keys, etc)
+* Fix ugly game over routine in main()

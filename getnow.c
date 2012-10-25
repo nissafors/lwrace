@@ -1,4 +1,4 @@
-#include <stddef.h>
+#include <stdlib.h>     /* For NULL */
 #include <sys/time.h>
 
 /* Return current time of day as secs.millisecs */

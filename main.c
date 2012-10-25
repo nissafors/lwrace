@@ -1,16 +1,15 @@
 #include <curses.h>
-#include <string.h>
 #include "lwrace.h"
 
 /* Current screen size globals */
-int Rows, Cols;
+int rows, cols;
 
 /* An ascii game using ncurses. Grab money while avoiding enemies and
  * falling objects. */
 int main()
 {
-	struct pos plPos;       /* Players position on screen */
-	int plDir;              /* Players direction */
+	struct pos plpos;       /* Players position on screen */
+	dir_t pldir;             /* Players direction */
 	int score;              /* Players score */
 	int prows, pcols;
 
@@ -23,32 +22,32 @@ int main()
 	nodelay(stdscr, TRUE);          /* Don't wait for keystrokes */
 
 	/* init values for gameplay */
-	plDir = INIT; /* Don't move until a key is pressed. Can't use STOP because
+	pldir = INIT; /* Don't move until a key is pressed. Can't use STOP because
                      player won't be drawn in that case. */
-	getgamearea(Rows, Cols);        /* Get size of playground   */ 
-	plPos.row = genrand(0, Rows);   /* Players initial position */
-	plPos.col = genrand(0, Cols);
+	getgamearea(rows, cols);        /* Get size of playground   */ 
+	plpos.row = genrand(0, rows);   /* Players initial position */
+	plpos.col = genrand(0, cols);
 	score = 0;                      /* Reset score */
 
 	/* Game loop */
-	while ((plDir = getdir(plDir)) != EXIT) {
-		getgamearea(Rows, Cols);        /* Get size of playground */ 
-		plPos = drawPlayer(plDir, plPos);
-		score += treasures(plPos);
-		if (prows != Rows || pcols != Cols)
-			for (pcols = 0; pcols < Cols; pcols++)
+	while ((pldir = getdir(pldir)) != EXIT) {
+		getgamearea(rows, cols);        /* Get size of playground */ 
+		plpos = drawplayer(pldir, plpos);
+		score += treasures(plpos);
+		if (prows != rows || pcols != cols)
+			for (pcols = 0; pcols < cols; pcols++)
 				mvaddch(prows, pcols, BACKGROUND);
-		mvprintw(Rows, 0,"Score: %d", score);   /* Print score */
-		prows = Rows;
-		pcols = Cols;
-		if(drawEnemies(plPos, score)) {
-			mvaddch(plPos.row, plPos.col, DEAD);  /* Player killed */
+		mvprintw(rows, 0,"Score: %d", score);   /* Print score */
+		prows = rows;
+		pcols = cols;
+		if(drawenemies(plpos, score)) {
+			mvaddch(plpos.row, plpos.col, DEAD);  /* Player killed */
 			break;
 		}
 	}
 
-	mvprintw(Rows/3,Cols/2-6,"GAME OVER!");
-	mvprintw(Rows-Rows/3,Cols/2-6,"Press enter");
+	mvprintw(rows/3,cols/2-6,"GAME OVER!");
+	mvprintw(rows-rows/3,cols/2-6,"Press enter");
 	refresh();
 	nodelay(stdscr, FALSE);
 	while(getch() != K_ENTER)

@@ -5,14 +5,15 @@
 
 /* Draw enemies hunting player. Enemies are added at ADD_ENEMY_SCORE_INTERVAL
  * up to MAX_ENEMIES. Player will be immortal for IMMORTAL_TIME seconds every
- * time an enemy is added. The first enemy will move every ENEMY_DELAY seconds,
- * and each successor is ENEMY_DELAY_DIFF slower than the last one.
- */
-int drawEnemies(struct pos plpos, int score) {
-	extern int    Rows, Cols; /* Current screen size */
+ * time an enemy is added. The first enemy will need ENEMY_DELAY seconds to
+ * cover the screen and each successor is ENEMY_DELAY_DIFF slower than its
+ * predecessor. */
+int drawenemies(struct pos plpos, int score) {
+	extern int    rows, cols; /* Current screen size */
 	static struct pos enpos[MAX_ENEMIES], lastpos[MAX_ENEMIES];
-	static double lasttime[MAX_ENEMIES], delay[MAX_ENEMIES];
-	static int    enCount;
+	static double lasttime[MAX_ENEMIES]; /* Used by setpos() for delay timer */
+	static double rdelay[MAX_ENEMIES], cdelay[MAX_ENEMIES];
+	static int    encount;
 	static double immortaltimer;
 	double        timeleft;
 	int           i, j;
@@ -20,41 +21,43 @@ int drawEnemies(struct pos plpos, int score) {
 	char          *immortaltext = "* Untouchable for %d seconds!";
 
 	/* Add an enemy on certain score intervals */
-	if ((float)score / (float)ADD_ENEMY_SCORE_INTERVAL == enCount
-	  && enCount < MAX_ENEMIES) { 
-		enpos[enCount].row = genrand(0,Rows); /* Randomize starting pos for  */
-		enpos[enCount].col = genrand(0,Cols); /* the new enemy               */
-		delay[enCount] = ENEMY_DELAY + ENEMY_DELAY_DIFF * enCount; /* Set delay.
-                          Every new enemy may have a different delay than the
-                          previous one as specified with ENEMY_DELAY_DIFF*/
-		enCount++;               /* Keep track of how many enemies there are */
+	if ((float)score / (float)ADD_ENEMY_SCORE_INTERVAL == encount
+	  && encount < MAX_ENEMIES) { 
+		enpos[encount].row = genrand(0,rows); /* Randomize starting pos for  */
+		enpos[encount].col = genrand(0,cols); /* the new enemy               */
+		/* Set delay. Every new enemy may have a different delay than the
+		 * previous one as specified with ENEMY_DELAY_DIFF */
+		rdelay[encount] = (ENEMY_DELAY_ROW / rows) +
+		                  (ENEMY_DELAY_DIFF * rows * encount);
+		cdelay[encount] = (ENEMY_DELAY_COL / cols) +
+		                  (ENEMY_DELAY_DIFF * cols * encount);
+		encount++;               /* Keep track of how many enemies there are */
 		immortaltimer = getnow();
 	}
 
 	/* Find out where each enemy should be and draw it if the position has
 	 * changed since last time */
-	for (i = 0; i < enCount; i++) {
+	for (i = 0; i < encount; i++) {
 		dir = hunt(&plpos, enpos+i, i);         /* Get new direction  */
-		if (setpos(dir, enpos+i, delay+i, lasttime+i)) {
+		if (setpos(dir, enpos+i, rdelay+i, cdelay+i, lasttime+i)) {
 			/* If screen size has changed and enemies is outside, move inside */
-			if (enpos[i].row > Rows) enpos[i].row = Rows - 1;
-			if (enpos[i].col > Cols) enpos[i].col = Cols - 1;
+			if (enpos[i].row > rows) enpos[i].row = rows - 1;
+			if (enpos[i].col > cols) enpos[i].col = cols - 1;
 			mvaddch(lastpos[i].row, lastpos[i].col, BACKGROUND);  /* Erase    */
 			mvaddch(enpos[i].row, enpos[i].col, ENEMY);           /* Draw     */
 			lastpos[i].row = enpos[i].row;
 			lastpos[i].col = enpos[i].col;              /* remember position  */
-			lasttime[i] = getnow();
 			if (immortaltimer + IMMORTAL_TIME < getnow()) {
 				if (enpos[i].row == plpos.row &&    /* Was player killed? */
 					enpos[i].col == plpos.col)
 						return HIT;
 			} else {    /* Player is immortal: display timer */
 				timeleft = immortaltimer + IMMORTAL_TIME - getnow();
-				mvprintw(Rows, Cols/2-strlen(immortaltext)/2, immortaltext,
+				mvprintw(rows, cols/2-strlen(immortaltext)/2, immortaltext,
 					(int)timeleft + 1);
 			if (timeleft < 0.1)   /* Erase timer just before time runs out */
 				for (j = 0; j < strlen(immortaltext); j++)
-					mvaddch(Rows, Cols/2-strlen(immortaltext)/2+j, BACKGROUND);
+					mvaddch(rows, cols/2-strlen(immortaltext)/2+j, BACKGROUND);
 			}
 		}
 	}
@@ -63,7 +66,7 @@ int drawEnemies(struct pos plpos, int score) {
 
 /* Supply logic and position updates for enemies. Return direction. */
 dir_t hunt(struct pos *target, struct pos *hunter, int logic) {
-	extern int    Rows, Cols; /* Current screen size */
+	extern int    rows, cols; /* Current screen size */
 	int up, down, left, right;
 	up = down = left = right = FALSE;
 	
@@ -75,14 +78,14 @@ dir_t hunt(struct pos *target, struct pos *hunter, int logic) {
 	if  (
 			(
 			 	(double)abs(hunter->row - target->row) 
-				< LOGIC_MIN_ROWQ * (double)Rows
+				< LOGIC_MIN_ROWQ * (double)rows
 				&& (double)abs(hunter->col - target->col)
-				< LOGIC_MIN_COLQ * (double)Cols
+				< LOGIC_MIN_COLQ * (double)cols
 			)
 			||  (double)abs(hunter->row - target->row)
-				> LOGIC_MAX_ROWQ * (double)Rows
+				> LOGIC_MAX_ROWQ * (double)rows
 			||  (double)abs(hunter->col - target->col)
-				> LOGIC_MAX_COLQ * (double)Cols
+				> LOGIC_MAX_COLQ * (double)cols
 		)
 		logic = 0;
 

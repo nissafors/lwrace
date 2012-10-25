@@ -28,17 +28,20 @@
 #define LOGIC_MAX_COLQ            0.375
 
 /* Timers - Time is given in seconds */
-#define IMMORTAL_TIME             3
-#define PLAYER_DELAY              0.05 /* This is the delays when screen size */
-#define ENEMY_DELAY               0.1  /* is STDROWS * STDCOLS. It's auto-    */
-#define OBJECT_DELAY              0.05 /* adjusted if screen size is altered. */
-#define ENEMY_DELAY_DIFF          0.0  /* DIFF is added to ENEMY_DELAY for
-                                          every new enemy compared to last
+#define IMMORTAL_TIME             3 /* The number of seconds that player is
+                                       untouchable when a new enemy is added */
+#define PLAYER_DELAY_ROW          1.15    /* The time it should take for a   */
+#define PLAYER_DELAY_COL          4.0     /* player, enemy or object to move */
+#define ENEMY_DELAY_ROW           2.0125  /* from one side of the screen to  */
+#define ENEMY_DELAY_COL           7.0     /* the other for rows and columns  */
+#define OBJECT_DELAY_COL          4.0     /* individually.                   */
+#define ENEMY_DELAY_DIFF          0.0  /* This number is added to ENEMY_DELAY
+                                          for every new enemy compared to last
                                           added enemy */
 
 /* Screen size */
 #define STDROWS  23 /* Normal number of legal rows for gameplay.
-                       Rows+1 = status bar */
+                       rows+1 = status bar */
 #define STDCOLS  80 /* Normal number of columns for gameplay. */
 
 /* Symbols for players, targets and enemies etc */
@@ -63,7 +66,7 @@
 #define K_RIGHT 'l'*/
 
 /* Macros */
-#define getgamearea(R, C)  getmaxyx(stdscr, (R), (C)), Rows--;
+#define getgamearea(R, C)  getmaxyx(stdscr, (R), (C)), rows--;
 
 /* Structs */
 struct pos {
@@ -76,14 +79,14 @@ typedef int dir_t;      /* Direction */
 
 /*** Prototypes ***/
 /* player.c */
-int getdir();
-struct pos getPos(struct pos, int);
-struct pos drawPlayer(int, struct pos);
+dir_t getdir(dir_t);
+struct pos getpos(struct pos, int);
+struct pos drawplayer(dir_t, struct pos);
 /* enemies.c */
-int drawEnemies(struct pos, int);
+int drawenemies(struct pos, int);
 dir_t hunt(struct pos *, struct pos *, int);
 /* setpos.c */
-int setpos(dir_t, struct pos *, double *, double *);
+int setpos(dir_t, struct pos *, double *, double *, double *);
 /* treasures.c */
 int treasures(struct pos);
 /* getnow.c */
