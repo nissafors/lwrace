@@ -76,6 +76,7 @@ struct pos {
 
 /* Typedefs */
 typedef int dir_t;      /* Direction */
+typedef int bool_t;     /* Boolean   */
 
 /*** Prototypes ***/
 /* player.c */
@@ -83,12 +84,12 @@ dir_t getdir(dir_t);
 struct pos getpos(struct pos, int);
 struct pos drawplayer(dir_t, struct pos);
 /* enemies.c */
-int drawenemies(struct pos, int);
+bool_t drawenemies(struct pos, int);
 dir_t hunt(struct pos *, struct pos *, int);
 /* setpos.c */
-int setpos(dir_t, struct pos *, double *, double *, double *);
+bool_t setpos(dir_t, struct pos *, double *, double *, double *);
 /* treasures.c */
-int treasures(struct pos);
+bool_t treasures(struct pos);
 /* getnow.c */
 double getnow();
 /* genrand.c */

@@ -1,9 +1,9 @@
 #include <curses.h>
 #include "lwrace.h"
 
-/* Add a treasure to screen that player should try to get. Return 1 if he
- * catches one, return 0 if not. */
-int treasures(struct pos plpos) {
+/* Add a treasure to screen that player should try to get. Return HIT if he
+ * catches one, return MISS if not. */
+bool_t treasures(struct pos plpos) {
 	extern int rows, cols;
 	static struct pos trpos;
 	static int trcount;
@@ -25,7 +25,7 @@ int treasures(struct pos plpos) {
                                                treasure, to cover the situation
                                                where player stopped on top of
                                                treasure */
-		return 1;
+		return HIT;
 	}
-	return 0;
+	return MISS;
 }
