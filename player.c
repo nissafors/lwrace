@@ -29,25 +29,20 @@ dir_t getdir(dir_t curdir) {
 /* Draw player. "dir" is the direction in which player is moving. Return
  * players new position. */
 struct pos drawplayer(dir_t dir, struct pos curpos) {
-	extern int rows, cols;
-	static double lasttime;     /* Used by setpos() for delay timer */
-	struct pos newpos;
-	double rdelay = PLAYER_DELAY_ROW / rows;
-	double cdelay = PLAYER_DELAY_COL / cols;
+	extern int    rows, cols;
+	static double lasttime;           /* Used by setpos() for delay timer */
+	static int    lastrows, lastcols; /* used by drawfigure() */
+	struct pos    oldpos;
+	double        rdelay = PLAYER_DELAY_ROW / rows;
+	double        cdelay = PLAYER_DELAY_COL / cols;
 
 	/* Set new position and draw player */
-	newpos = curpos;
-	if (setpos(dir, &newpos, &rdelay, &cdelay, &lasttime)) {
-		if (newpos.row > rows)              /* Player may be off screen if   */
-			newpos.row = rows - PL_ADJ_MARGIN;  /* screen size changed. Move */
-		if (newpos.col > cols)              /* inside with a margin to avoid */
-			newpos.col = cols - PL_ADJ_MARGIN;  /* instant death.            */
-		if ((curpos.row == newpos.row && curpos.col == newpos.col 
-				&& dir != INIT) || dir == STOP)
-			return curpos;/* Don't redraw unless moved or need to initialize */
-		mvaddch(curpos.row,curpos.col,BACKGROUND);      /* erase old player  */
-		mvaddch(newpos.row,newpos.col,PLAYER);          /* draw new player   */
-		curpos.row = newpos.row, curpos.col = newpos.col;/* remember position*/
+	oldpos = curpos;
+	if (setpos(dir, &curpos, &rdelay, &cdelay, &lasttime) || dir == INIT) {
+		curpos = drawfigure(curpos, PLAYER, oldpos, BACKGROUND,
+		                    lastrows, lastcols);
+		lastrows = rows, lastcols = cols; /* Remember screen size */
 	}
+	/* Go home */
 	return curpos;
 }

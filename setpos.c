@@ -1,9 +1,11 @@
 #include "lwrace.h"     /* For dir_t and struct pos */
 #include <math.h>
 
-/* Set pos based on dir if the time specified by *rd and *cd (row delay and
- * col delay) has passed since trec. Returns TRUE if delay time has elapsed
- * and FALSE otherwise */
+/* 
+ * Set pos based on dir if the time specified by *rd and *cd (row delay and
+ * col delay) has passed since trec. Returns TRUE if position was updated
+ * and FALSE otherwise
+ */
 bool_t setpos(dir_t dir, struct pos *rc, double *rd, double *cd, double *trec) {
 	extern int rows, cols;
 	const int TRUE = 1;
@@ -55,6 +57,8 @@ bool_t setpos(dir_t dir, struct pos *rc, double *rd, double *cd, double *trec) {
 			rc->row++;
 			rc->col--;
 			break;
+		default:
+			return FALSE;   /* Position not changed */
 	}
 
 	/* Check if new position is outside screen */

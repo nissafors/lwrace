@@ -12,12 +12,14 @@
  */
 bool_t drawenemies(struct pos plpos, int score) {
 	extern int    rows, cols; /* Current screen size */
-	static struct pos enpos[MAX_ENEMIES], lastpos[MAX_ENEMIES];
+	static struct pos lastpos[MAX_ENEMIES];
 	static double lasttime[MAX_ENEMIES]; /* Used by setpos() for delay timer */
+	static int    lastrows[MAX_ENEMIES], lastcols[MAX_ENEMIES];
 	static double delaydiff[MAX_ENEMIES];
 	static int    encount;
 	static double immortaltimer;
 	static bool_t displaytimer;
+	struct pos    enpos[MAX_ENEMIES];
 	double        rdelay[MAX_ENEMIES], cdelay[MAX_ENEMIES];
 	double        timeleft;
 	int           i, j;
@@ -44,21 +46,18 @@ bool_t drawenemies(struct pos plpos, int score) {
 	/* Find out where each enemy should be and draw it if the position has
 	 * changed since last time */
 	for (i = 0; i < encount; i++) {
+		/* We need current and previous positions at the same time */
+		enpos[i] = lastpos[i];
 		/* Get new direction  */
 		dir = hunt(&plpos, enpos+i, i);
 		/* Calculate delays */
 		rdelay[i] = ENEMY_DELAY_ROW / rows + delaydiff[i] / rows;
 		cdelay[i] = ENEMY_DELAY_COL / cols + delaydiff[i] / cols;
+		/* Did position change since last time? */
 		if (setpos(dir, enpos+i, rdelay+i, cdelay+i, lasttime+i)) {
-			/* If screen size has changed and enemies is outside, move inside */
-			if (enpos[i].row > rows) enpos[i].row = rows - 1;
-			if (enpos[i].col > cols) enpos[i].col = cols - 1;
-			/* Erase old and draw new enemy. */
-			mvaddch(lastpos[i].row, lastpos[i].col, BACKGROUND); /* Erase    */
-			mvaddch(enpos[i].row, enpos[i].col, ENEMY);          /* Draw     */
-			/* remember position  */
-			lastpos[i].row = enpos[i].row;
-			lastpos[i].col = enpos[i].col;
+			/* Draw enemy */
+			lastpos[i] = drawfigure(enpos[i], ENEMY, lastpos[i], BACKGROUND,
+			                        lastrows[i], lastcols[i]); 
 			/* Shorthand for immortality time left for player */
 			timeleft = immortaltimer + IMMORTAL_TIME - getnow();
 			/* Is player immortal? */
@@ -81,6 +80,8 @@ bool_t drawenemies(struct pos plpos, int score) {
 				mvprintw(rows, cols/2-strlen(immortaltext)/2, immortaltext,
 					(int)timeleft + 1);
 			}
+			/* remember screen size */
+			lastrows[i] = rows, lastcols[i] = cols;
 		}
 	}
 	/* Player survived this round */

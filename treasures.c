@@ -7,6 +7,7 @@ bool_t treasures(struct pos plpos) {
 	extern int rows, cols;
 	static struct pos trpos;
 	static int trcount;
+	static int oldrows, oldcols;
 
 	if (!trcount) {                 /* New treasure needed */
 		trpos.row = genrand(0, rows);
@@ -14,11 +15,10 @@ bool_t treasures(struct pos plpos) {
 		trcount++;
 	}
   
-	if (trpos.row > rows) trpos.row = rows - 1; /* If screen size has changed */
-	if (trpos.col > cols) trpos.col = cols - 1; /* treasure may be unreachable*/
-
-	mvaddch(trpos.row, trpos.col, TREASURE);  /* Draw outside if's, in case
-                                                 enemy erases it */
+	/* Draw treasure */
+	trpos = drawfigure(trpos, TREASURE, trpos, BACKGROUND, oldrows, oldcols);
+	/* Remember screensize */
+	oldrows = rows, oldcols = cols;
 	if (plpos.row == trpos.row && plpos.col == trpos.col) { /* Player hit it */
 		trcount--;
 		mvaddch(trpos.row, trpos.col, PLAYER); /* Use player char to erase old

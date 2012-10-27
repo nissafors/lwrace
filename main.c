@@ -31,7 +31,7 @@ int main()
 
 	/* Game loop */
 	while ((pldir = getdir(pldir)) != EXIT) {
-		getgamearea(rows, cols);        /* Get size of playground */ 
+		getgamearea(rows, cols);        /* Get new screensize  */
 		plpos = drawplayer(pldir, plpos);
 		score += treasures(plpos);
 		if (prows != rows || pcols != cols)

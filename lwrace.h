@@ -88,6 +88,8 @@ bool_t drawenemies(struct pos, int);
 dir_t hunt(struct pos *, struct pos *, int);
 /* setpos.c */
 bool_t setpos(dir_t, struct pos *, double *, double *, double *);
+/* drawfigure.c */
+struct pos drawfigure (struct pos, char, struct pos, char, int, int);
 /* treasures.c */
 bool_t treasures(struct pos);
 /* getnow.c */
