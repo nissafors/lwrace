@@ -12,13 +12,15 @@ bool_t fobjects(struct pos plpos, int score) {
 	static double delay[MAX_OBJECTS];
 	int           i;
 
+
 	/* Add an object on certain score intervals */
-	if ((float)score / (float)ADD_OBJECTS_SCORE_INTERVAL == objcount + MAX_ENEMIES
-	  && objcount < MAX_OBJECTS) { 
+	if ((float)score / (float)ADD_OBJECTS_SCORE_INTERVAL == objcount +
+	   MAX_ENEMIES && objcount < MAX_OBJECTS) { 
 		/* Randomize starting position for the new object */
 		lastpos[objcount].row = 0;
 		lastpos[objcount].col = genrand(0,cols);
-		delay[objcount] = 0.1;
+		delay[objcount] = (float)genrand(FOBJ_INIT_DELAY_MIN * 100,
+		                   FOBJ_INIT_DELAY_MAX * 100) / 100.0;;
 		/* Keep track of how many objects there are */
 		objcount++;
 	}
@@ -31,12 +33,15 @@ bool_t fobjects(struct pos plpos, int score) {
 		/* Did position change since last time? */
 		if (setpos(DOWN, objpos+i, delay+i, delay+i, lasttime+i)) {
 			/* Calculate delays */
-			delay[i] = 0.05 * pow(2, -(objpos[i].row / rows) * 16);
+			delay[i] = FOBJ_FALL_DELAY_END + FOBJ_FALL_DELAY_START *
+			           pow(FOBJ_BASE, -((float)objpos[i].row / (float)rows) *
+			           FOBJ_ACC);
 			/* If object fell through bottom att screen restart at top */
 			if (lastpos[i].row > rows - 2) {
 				objpos[i].row = 0;
 				objpos[i].col = genrand(0, cols);
-				delay[i] = 0.8;
+				delay[i] = (float)genrand(FOBJ_HANG_DELAY_MIN * 100,
+				             FOBJ_HANG_DELAY_MAX * 100) / 100.0;
 			}
 			/* Draw object */
 			lastpos[i] = drawfigure(objpos[i], OBJECT, lastpos[i], BACKGROUND,

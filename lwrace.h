@@ -35,11 +35,18 @@
 #define PLAYER_DELAY_ROW          1.15    /* The time it should take for a   */
 #define PLAYER_DELAY_COL          4.0     /* player, enemy or object to move */
 #define ENEMY_DELAY_ROW           2.0125  /* from one side of the screen to  */
-#define ENEMY_DELAY_COL           7.0     /* the other for rows and columns  */
-#define OBJECT_DELAY_COL          4.0     /* individually.                   */
+#define ENEMY_DELAY_COL           7.0     /* the other: rows and columns     */
 #define ENEMY_DELAY_DIFF          0.0  /* This number is added to ENEMY_DELAY
                                           for every new enemy compared to last
                                           added enemy */
+#define FOBJ_INIT_DELAY_MIN       1
+#define FOBJ_INIT_DELAY_MAX       2
+#define FOBJ_HANG_DELAY_MIN       0
+#define FOBJ_HANG_DELAY_MAX       1
+#define FOBJ_FALL_DELAY_START     0.2
+#define FOBJ_FALL_DELAY_END       0.03
+#define FOBJ_BASE                 2
+#define FOBJ_ACC                 16
 
 /* Screen size */
 #define STDROWS  23 /* Normal number of legal rows for gameplay.
