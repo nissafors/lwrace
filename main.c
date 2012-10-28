@@ -32,6 +32,7 @@ int main()
 	/* Game loop */
 	while ((pldir = getdir(pldir)) != EXIT) {
 		getgamearea(rows, cols);        /* Get new screensize  */
+		mvprintw(rows, cols-8, "%3d, %3d", rows, cols);
 		plpos = drawplayer(pldir, plpos);
 		score += treasures(plpos);
 		if (prows != rows || pcols != cols)
@@ -40,7 +41,7 @@ int main()
 		mvprintw(rows, 0,"Score: %d", score);   /* Print score */
 		prows = rows;
 		pcols = cols;
-		if(drawenemies(plpos, score)) {
+		if(drawenemies(plpos, score) || fobjects(plpos, score)) {
 			mvaddch(plpos.row, plpos.col, DEAD);  /* Player killed */
 			break;
 		}

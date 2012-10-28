@@ -1,21 +1,23 @@
 /* Game control */
-#define STOP                      0
-#define UP                        1
-#define DOWN                      2
-#define LEFT                      3
-#define RIGHT                     4
-#define NE                        5
-#define NW                        6
-#define SE                        7
-#define SW                        8
-#define PAUSE                     9
-#define INIT                     -1
-#define EXIT                     -2
-#define MAX_ENEMIES               3
-#define ADD_ENEMY_SCORE_INTERVAL  5
-#define HIT                       1
-#define MISS                      0
-#define PL_ADJ_MARGIN             5 /* Margin to corner if player were moved
+#define STOP                       0
+#define UP                         1
+#define DOWN                       2
+#define LEFT                       3
+#define RIGHT                      4
+#define NE                         5
+#define NW                         6
+#define SE                         7
+#define SW                         8
+#define PAUSE                      9
+#define INIT                      -1
+#define EXIT                      -2
+#define MAX_ENEMIES                3
+#define MAX_OBJECTS                5
+#define ADD_ENEMY_SCORE_INTERVAL   5
+#define ADD_OBJECTS_SCORE_INTERVAL 5
+#define HIT                        1
+#define MISS                       0
+#define PL_ADJ_MARGIN              5 /* Margin to corner if player were moved
                                        inside on screen size change. This is
                                        to avoid instant death if enemy also
                                        was moved to the same corner. */
@@ -49,6 +51,7 @@
 #define DEAD        'X'
 #define ENEMY       '#'
 #define TREASURE    '$'
+#define OBJECT      'o'
 #define BACKGROUND  ' '
 
 /* Keys */
@@ -96,3 +99,5 @@ bool_t treasures(struct pos);
 double getnow();
 /* genrand.c */
 int genrand(int, int);
+/* fobjects.c */
+bool_t fobjects(struct pos, int);
