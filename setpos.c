@@ -4,7 +4,7 @@
 /* 
  * Set pos based on dir if the time specified by *rd and *cd (row delay and
  * col delay) has passed since trec. Returns TRUE if position was updated
- * and FALSE otherwise
+ * and resets *trec. Returns FALSE otherwise.
  */
 bool_t setpos(dir_t dir, struct pos *rc, double *rd, double *cd, double *trec) {
 	extern int rows, cols;

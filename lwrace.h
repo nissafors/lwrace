@@ -39,12 +39,12 @@
 #define ENEMY_DELAY_DIFF          0.0  /* This number is added to ENEMY_DELAY
                                           for every new enemy compared to last
                                           added enemy */
-#define FOBJ_INIT_DELAY_MIN       1
-#define FOBJ_INIT_DELAY_MAX       2
+#define FOBJ_INIT_DELAY_MIN       24
+#define FOBJ_INIT_DELAY_MAX       48
 #define FOBJ_HANG_DELAY_MIN       0
-#define FOBJ_HANG_DELAY_MAX       1
-#define FOBJ_FALL_DELAY_START     0.2
-#define FOBJ_FALL_DELAY_END       0.03
+#define FOBJ_HANG_DELAY_MAX       24
+#define FOBJ_FALL_DELAY_START     4.8
+#define FOBJ_FALL_DELAY_END       0.72
 #define FOBJ_BASE                 2
 #define FOBJ_ACC                 16
 

@@ -13,9 +13,9 @@ struct pos drawfigure (struct pos drawpos, char drawc,
 
 	/* If screen size has changed and figure is outside, move inside */
 	if (rows != oldrows && oldrows != 0)
-		drawpos.row = drawpos.row * rows / oldrows;
+		drawpos.row *= (float)rows / (float)oldrows;
 	if (cols != oldcols && oldcols != 0)
-		drawpos.col = drawpos.col * cols / oldcols;
+		drawpos.col *= (float)cols / (float)oldcols;
 
 	/* Erase old and draw new enemy. */
 	mvaddch(erasepos.row, erasepos.col, erasec); /* Erase    */
