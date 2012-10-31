@@ -1,5 +1,6 @@
 #include <curses.h>
-#include "lwrace.h"
+#include "globals.h"
+#include "main.h"
 
 /* Current screen size globals */
 int rows, cols;
@@ -8,45 +9,43 @@ int rows, cols;
  * falling objects. */
 int main()
 {
-	struct pos plpos;       /* Players position on screen */
-	dir_t pldir;             /* Players direction */
-	int score;              /* Players score */
-	int prows, pcols;
+	struct pos plpos;      /* Players position on screen */
+	dir_t pldir;           /* Players direction */
+	int score;             /* Players score */
 
 	/* ncurses settings */
-	initscr();                      /* Clear screen and enter curses mode */
-	raw();                          /* Line buffering disabled */
-	keypad(stdscr, TRUE);           /* Enable F1-F12, arrow keys etc */
-	noecho();                       /* Supress unnecessary echoing */
-	curs_set(0);                    /* Hide the cursor */
-	nodelay(stdscr, TRUE);          /* Don't wait for keystrokes */
+	initscr();             /* Clear screen and enter curses mode */
+	raw();                 /* Line buffering disabled */
+	keypad(stdscr, TRUE);  /* Enable F1-F12, arrow keys etc */
+	noecho();              /* Supress unnecessary echoing */
+	curs_set(0);           /* Hide the cursor */
+	nodelay(stdscr, TRUE); /* Don't wait for keystrokes */
 
 	/* init values for gameplay */
 	pldir = INIT; /* Don't move until a key is pressed. Can't use STOP because
-                     player won't be drawn in that case. */
+                     player won't be drawn in that case.        */
 	getgamearea(rows, cols);        /* Get size of playground   */ 
-	plpos.row = genrand(0, rows);   /* Players initial position */
-	plpos.col = genrand(0, cols);
-	score = 0;                      /* Reset score */
+	plpos.row = genrand(0, rows);   /* Randomize Players        */
+	plpos.col = genrand(0, cols);   /* initial position.        */
+	score = 0;                      /* Reset score              */
 
 	/* Game loop */
 	while ((pldir = getdir(pldir)) != EXIT) {
-		getgamearea(rows, cols);        /* Get new screensize  */
-		mvprintw(rows, cols-8, "%3d, %3d", rows, cols);
+		/* Get new screensize  */
+		getgamearea(rows, cols);
+		/* Update and print players position and score */
 		plpos = drawplayer(pldir, plpos);
 		score += treasures(plpos);
-		if (prows != rows || pcols != cols)
-			for (pcols = 0; pcols < cols; pcols++)
-				mvaddch(prows, pcols, BACKGROUND);
-		mvprintw(rows, 0,"Score: %d", score);   /* Print score */
-		prows = rows;
-		pcols = cols;
+		printscore(score);
+		/* Update and draw enemies and falling objects. These return
+		 * HIT (= TRUE) if player ran into any of them. */
 		if(drawenemies(plpos, score) || fobjects(plpos, score)) {
 			mvaddch(plpos.row, plpos.col, DEAD);  /* Player killed */
 			break;
 		}
 	}
 
+	/*** UGLY GAME OVER PLACEHOLDER!!! ***/
 	mvprintw(rows/3,cols/2-6,"GAME OVER!");
 	mvprintw(rows-rows/3,cols/2-6,"Press enter");
 	refresh();

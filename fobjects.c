@@ -1,19 +1,13 @@
 #include <curses.h>
 #include <math.h>
-#include "lwrace.h"
+#include "globals.h"
+#include "fobjects.h"
+#include "enemies.h" /* Needs to know MAX_ENEMIES */
 
 /*
  * Generates dangerous falling objects at certain score intervals after the
- * last enemy has emerged. This interval is defined by OBJECTS_SCORE_INTERVAL.
- * Before an object starts falling it will hang from the ceiling for a random
- * time between FOBJ_INIT_DELAY_MIN and FOBJ_INIT_DELAY_MAX. When it starts
- * falling the delay is defined by FOBJ_FALL_DELAY_START, and then accelerates
- * up to FOBJ_FALL_DELAY_END. The acceleration algorithm is a exponential
- * function where the base is FOBJ_BASE and "X" (the portion of the screen it
- * has fallen) is multiplied by FOBJ_ACC. When the objects has reached the
- * floor it returns to the ceiling with a new "hang" delay between
- * FOBJ_HANG_DELAY_MIN and FOBJ_HANG_DELAY_MAX. All delays will be divided
- * by rows to adjust for screen size.
+ * last enemy has emerged. Intervals and delays are controlled by defines in
+ * fobjects.h.
  * If the player was hit by an object the function returns HIT.
  * Otherwise it returns MISS.
  */
@@ -28,10 +22,8 @@ bool_t fobjects(struct pos plpos, int score) {
 	int           i;
 
 	/* Add an object on certain score intervals */
-	//if ((float)score / (float)ADD_OBJECTS_SCORE_INTERVAL == objcount +
-	//   MAX_ENEMIES && objcount < MAX_OBJECTS) { 
-	if ((float)score / (float)ADD_OBJECTS_SCORE_INTERVAL == objcount
-	   && objcount < MAX_OBJECTS) { 
+	if ((float)score / (float)ADD_OBJECTS_SCORE_INTERVAL == objcount +
+	   MAX_ENEMIES && objcount < MAX_OBJECTS) { 
 		/* Randomize starting position for the new object */
 		lastpos[objcount].row = 0;
 		lastpos[objcount].col = genrand(0,cols);

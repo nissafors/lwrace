@@ -1,4 +1,4 @@
-#include "lwrace.h"     /* For dir_t and struct pos */
+#include "globals.h"     /* For dir_t and struct pos */
 #include <math.h>
 
 /* 

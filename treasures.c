@@ -1,5 +1,5 @@
 #include <curses.h>
-#include "lwrace.h"
+#include "globals.h"
 
 /* Add a treasure to screen that player should try to get. Return HIT if he
  * catches one, return MISS if not. */

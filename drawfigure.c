@@ -1,5 +1,5 @@
 #include <curses.h>
-#include "lwrace.h"
+#include "globals.h"
 
 /*
  * Draw figure drawc at drawpos and erase (using erasec) at erasepos.

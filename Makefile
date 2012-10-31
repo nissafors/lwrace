@@ -11,13 +11,13 @@ endif
 $(PROGRAM): $(OBJECTS)
 	$(CC) $(INC_PATH) $(CFLAGS) $^ $(LFLAGS) -o $(PROGRAM)
 
-main.o: lwrace.h
-player.o: lwrace.h
-enemies.o: lwrace.h
-treasures.o: lwrace.h
-setpos.o: lwrace.h
-drawfigure.o: lwrace.h
-fobjects.o: lwrace.h
+main.o: main.h globals.h
+player.o: player.h globals.h
+enemies.o: enemies.h globals.h
+treasures.o: globals.h
+setpos.o: globals.h
+drawfigure.o: globals.h
+fobjects.o: fobjects.h globals.h
 
 clean:
 	rm -f $(PROGRAM)

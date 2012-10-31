@@ -1,7 +1,8 @@
 #include <curses.h>     /* For mvaddch() and mvprintw() */
 #include <string.h>     /* For strlen() */
 #include <stdlib.h>     /* For abs() */
-#include "lwrace.h"
+#include "globals.h"
+#include "enemies.h"
 
 /* 
  * Draw enemies hunting player. Enemies are added at ADD_ENEMY_SCORE_INTERVAL

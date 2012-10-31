@@ -1,9 +1,12 @@
 #include <curses.h>
-#include "lwrace.h"
+#include "globals.h"
+#include "player.h"
 
-/* Read keybuffer and return direction, pause or exit. "curdir" is current
+/*
+ * Read keybuffer and return direction, pause or exit. "curdir" is current
  * direction, which is returned if none of the specified keys have been
- * pressed */
+ * pressed
+ */
 dir_t getdir(dir_t curdir) {
 	int key = getch();
 
@@ -26,8 +29,10 @@ dir_t getdir(dir_t curdir) {
 	return curdir;  /* No valid keys pressed, return current direction */
 }
 
-/* Draw player. "dir" is the direction in which player is moving. Return
- * players new position. */
+/*
+ * Draw player. "dir" is the direction in which player is moving. Return
+ * players new position. Delay control is in header.
+ */
 struct pos drawplayer(dir_t dir, struct pos curpos) {
 	extern int    rows, cols;
 	static double lasttime;           /* Used by setpos() for delay timer */
@@ -45,4 +50,23 @@ struct pos drawplayer(dir_t dir, struct pos curpos) {
 	}
 	/* Go home */
 	return curpos;
+}
+
+/*
+ * Print score at last row. Erase old status row first if screen size changed
+ */
+void printscore (int score) {
+	extern int rows;
+	extern int cols;
+	static int oldscrrow;
+	int        clrcol;
+	
+	/* Erase old status row if screensize changed */
+	if (oldscrrow != rows)
+		for (clrcol = 0; clrcol < cols; clrcol++)
+			mvaddch(oldscrrow, clrcol, BACKGROUND);
+	/* Print score */
+	mvprintw(rows, 0,"Score: %d", score);
+	/* Save current status row position */
+	oldscrrow = rows;
 }
