@@ -1,6 +1,22 @@
+/* Part of Lawyer Race 
+   Functions to handle the player
+   Copyright (C) 2012 Andreas Andersson
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
 #include <curses.h>
 #include "globals.h"
-#include "player.h"
 
 /*
  * Read keybuffer and return direction, pause or exit. "curdir" is current
@@ -8,24 +24,25 @@
  * pressed
  */
 dir_t getdir(dir_t curdir) {
+	extern int key_up, key_down, key_left, key_right;
+	extern int key_stop, key_pause, key_esc;
+
 	int key = getch();
 
-	switch (key) {
-		case K_UP:
-			return UP;
-		case K_DOWN:
-			return DOWN;
-		case K_LEFT:
-			return LEFT;
-		case K_RIGHT:
-			return RIGHT;
-		case K_STOP:
-			return STOP;
-		case K_PAUSE:
-			return PAUSE;
-		case K_ESC:
-			return EXIT;
-	}
+	if (key == key_up)
+		return UP;
+	if (key == key_down)
+		return DOWN;
+	if (key == key_left)
+		return LEFT;
+	if (key == key_right)
+		return RIGHT;
+	if (key == key_stop)
+		return STOP;
+	if (key == key_pause)
+		return PAUSE;
+	if (key == key_esc)
+		return EXIT;
 	return curdir;  /* No valid keys pressed, return current direction */
 }
 
@@ -35,11 +52,13 @@ dir_t getdir(dir_t curdir) {
  */
 struct pos drawplayer(dir_t dir, struct pos curpos) {
 	extern int    rows, cols;
+	extern double player_row_delay;
+	extern double player_col_delay;
 	static double lasttime;           /* Used by setpos() for delay timer */
 	static int    lastrows, lastcols; /* used by drawfigure() */
 	struct pos    oldpos;
-	double        rdelay = PLAYER_DELAY_ROW / rows;
-	double        cdelay = PLAYER_DELAY_COL / cols;
+	double        rdelay = player_row_delay / rows;
+	double        cdelay = player_col_delay / cols;
 
 	/* Set new position and draw player */
 	oldpos = curpos;

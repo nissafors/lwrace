@@ -1,3 +1,20 @@
+/* Part of Lawyer Race 
+   Generate objects falling down on player
+   Copyright (C) 2012 Andreas Andersson
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
 #include <curses.h>
 #include <math.h>
 #include "globals.h"
@@ -6,13 +23,25 @@
 
 /*
  * Generates dangerous falling objects at certain score intervals after the
- * last enemy has emerged. Intervals and delays are controlled by defines in
- * fobjects.h.
+ * last enemy has emerged.
+ * Before an object starts falling it will hang from the ceiling for a random
+ * time between "fobj_init_delay_min" and "fobj_init_delay_max". When it starts
+ * falling the delay is defined by "fobj_fall_delay_start", and then accelerates
+ * up to "fobj_fall_delay_end". The acceleration algorithm is a exponential
+ * function where the base is "fobj_base" and the exponent is the portion of the
+ * screen it has fallen multiplied by "fobj_acc". When the object has reached
+ * the floor it returns to the ceiling with a new "hang" delay between
+ * "fobj_hang_delay_min" and "fobj_hang_delay_max". All delays will be divided
+ * by rows to adjust for screen size.
  * If the player was hit by an object the function returns HIT.
  * Otherwise it returns MISS.
  */
 bool_t fobjects(struct pos plpos, int score) {
 	extern int    rows, cols; /* Current screen size */
+	extern int    fobj_init_delay_min, fobj_init_delay_max;
+	extern int    fobj_hang_delay_min, fobj_hang_delay_max;
+	extern double fobj_fall_delay_start, fobj_fall_delay_end;
+	extern double fobj_base, fobj_acc;
 	static struct pos lastpos[MAX_OBJECTS];
 	static double lasttime[MAX_OBJECTS]; /* Used by setpos() for delay timer */
 	static int    lastrows[MAX_OBJECTS], lastcols[MAX_OBJECTS];
@@ -29,8 +58,8 @@ bool_t fobjects(struct pos plpos, int score) {
 		lastpos[objcount].col = genrand(0,cols);
 		/* Randomize initial delay: The time this object hangs from the
 		 * ceiling before it starts falling the first time it appears */
-		delay[objcount] = (float)genrand(FOBJ_INIT_DELAY_MIN * 100,
-		                   FOBJ_INIT_DELAY_MAX * 100) / 100.0;;
+		delay[objcount] = (float)genrand(fobj_init_delay_min * 100,
+		                   fobj_init_delay_max * 100) / 100.0;;
 		/* Adjust delay for screen size */
 		delay[objcount] /= rows;
 		/* Keep track of how many objects there are */
@@ -45,16 +74,16 @@ bool_t fobjects(struct pos plpos, int score) {
 		/* Did position change since last time? */
 		if (setpos(DOWN, objpos+i, delay+i, delay+i, lasttime+i)) {
 			/* Calculate delay for next round */
-			delay[i] = FOBJ_FALL_DELAY_END + FOBJ_FALL_DELAY_START *
-			           pow(FOBJ_BASE, -((float)objpos[i].row / (float)rows) *
-			           FOBJ_ACC);
+			delay[i] = fobj_fall_delay_end + fobj_fall_delay_start *
+			           pow(fobj_base, -((double)objpos[i].row / (double)rows) *
+			           fobj_acc);
 			/* If object fell through bottom att screen restart at top */
 			if (lastpos[i].row > rows - 2) {
 				objpos[i].row = 0;
 				objpos[i].col = genrand(0, cols);
 				/* Set new delay for how long it should hang from the ceiling.*/
-				delay[i] = (float)genrand(FOBJ_HANG_DELAY_MIN * 100,
-				             FOBJ_HANG_DELAY_MAX * 100) / 100.0;
+				delay[i] = (float)genrand(fobj_hang_delay_min * 100,
+				             fobj_hang_delay_max * 100) / 100.0;
 			}
 			/* Draw object */
 			lastpos[i] = drawfigure(objpos[i], OBJECT, lastpos[i], BACKGROUND,
@@ -66,7 +95,7 @@ bool_t fobjects(struct pos plpos, int score) {
 		}
 		/* Was player hit? */
 		if (objpos[i].row == plpos.row && objpos[i].col == plpos.col)
-			return MISS; /* Yes. Return to caller */
+			return HIT; /* Yes. Return to caller */
 	}
 
 	/* Player survived this round */

@@ -1,3 +1,19 @@
+/* Defines and prototypes used by several Lawyer Race files
+   Copyright (C) 2012 Andreas Andersson
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
 /* Game control */
 #define STOP                       0
 #define UP                         1
@@ -21,20 +37,6 @@
 #define TREASURE    '$'
 #define OBJECT      'o'
 #define BACKGROUND  ' '
-
-/* Keys */
-#define K_ESC   27
-#define K_PAUSE 'p'
-#define K_STOP  ' '
-#define K_ENTER '\n'
-#define K_UP    KEY_UP
-#define K_DOWN  KEY_DOWN
-#define K_LEFT  KEY_LEFT
-#define K_RIGHT KEY_RIGHT
-/*#define K_UP    'k'
-#define K_DOWN  'j'
-#define K_LEFT  'h'
-#define K_RIGHT 'l'*/
 
 /* Structs */
 struct pos {

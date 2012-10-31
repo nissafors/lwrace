@@ -1,3 +1,20 @@
+/* Part of Lawyer Race 
+   Enemy handling functions
+   Copyright (C) 2012 Andreas Andersson
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
 #include <curses.h>     /* For mvaddch() and mvprintw() */
 #include <string.h>     /* For strlen() */
 #include <stdlib.h>     /* For abs() */
@@ -6,13 +23,19 @@
 
 /* 
  * Draw enemies hunting player. Enemies are added at ADD_ENEMY_SCORE_INTERVAL
- * up to MAX_ENEMIES. Player will be immortal for IMMORTAL_TIME seconds every
- * time an enemy is added. The first enemy will need ENEMY_DELAY seconds to
- * cover the screen and each successor is ENEMY_DELAY_DIFF slower than its
- * predecessor.
+ * up to MAX_ENEMIES. Player will be immortal for "enemy_nokill_time" seconds
+ * when an enemy is added.
+ * Delays are indipendent for rows and colummns and set using two externs:
+ * "enemy_row_delay" and "enemy_col_delay". Delays are calculated by dividing
+ * these values by rows and cols respectively. Each new enemy will be
+ * ENEMY_DELAY_DIFF / rows and ENEMY_DELAY_DIFF / cols slower than previous
+ * enemy.
+ * ADD_ENEMY_SCORE_INTERVAL, MAX_ENEMIES and ENEMY_DELAY_DIFF are defined in
+ * enemies.h.
  */
 bool_t drawenemies(struct pos plpos, int score) {
 	extern int    rows, cols; /* Current screen size */
+	extern double enemy_row_delay, enemy_col_delay, enemy_nokill_time;
 	static struct pos lastpos[MAX_ENEMIES];
 	static double lasttime[MAX_ENEMIES]; /* Used by setpos() for delay timer */
 	static int    lastrows[MAX_ENEMIES], lastcols[MAX_ENEMIES];
@@ -52,15 +75,15 @@ bool_t drawenemies(struct pos plpos, int score) {
 		/* Get new direction  */
 		dir = hunt(&plpos, enpos+i, i);
 		/* Calculate delays */
-		rdelay[i] = ENEMY_DELAY_ROW / rows + delaydiff[i] / rows;
-		cdelay[i] = ENEMY_DELAY_COL / cols + delaydiff[i] / cols;
+		rdelay[i] = enemy_row_delay / rows + delaydiff[i] / rows;
+		cdelay[i] = enemy_col_delay / cols + delaydiff[i] / cols;
 		/* Did position change since last time? */
 		if (setpos(dir, enpos+i, rdelay+i, cdelay+i, lasttime+i)) {
 			/* Draw enemy */
 			lastpos[i] = drawfigure(enpos[i], ENEMY, lastpos[i], BACKGROUND,
 			                        lastrows[i], lastcols[i]); 
 			/* Shorthand for immortality time left for player */
-			timeleft = immortaltimer + IMMORTAL_TIME - getnow();
+			timeleft = immortaltimer + enemy_nokill_time - getnow();
 			/* Is player immortal? */
 			if (timeleft < 0) {
 				/* No! Is timer still visible and should be erased? */

@@ -1,7 +1,4 @@
-* One .h-file per .c-file
 * Write functions to display and store high scores
 * Write intro?
-* Some defines should be variables (delays, keys, number of enemies, etc)
 * Take som command line arguments (keys, etc)
 * Fix ugly game over routine in main()
-* Add license
