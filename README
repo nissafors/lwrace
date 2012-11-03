@@ -2,7 +2,8 @@ Lawyer Race is a simple text-mode game. Use arrow keys to control the player.
 Avoid #'s and o's and collect $'s.
 
 Lawyer Race depends on ncurses. Install "ncurses-devel" (i.e "apt-get install
-ncurses-devel" or "yum install ncurses-devel") or similar package.
+ncurses-devel" or "yum install ncurses-devel") or similar package before
+building it.
 
 To build Lawyer Race, just type:
 
@@ -15,3 +16,6 @@ in a terminal. To start the game, type:
 The game is provided as-is with absolutely no warranty whatsoever.
 It is released under the terms of the GNU General Public License (see COPYING
 for details).
+
+Authors:
+Andreas Andersson

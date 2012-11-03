@@ -2,6 +2,7 @@ CC := gcc
 PROGRAM := lwrace
 CFLAGS := -Wall -g
 LFLAGS := -lncurses -lm
+VPATH := src
 OBJECTS := main.o player.o enemies.o treasures.o getnow.o genrand.o drawfigure.o fobjects.o
 # Cygwin hides curses.h, must specify include path:
 ifeq ($(shell uname), Cygwin)
