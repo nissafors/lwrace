@@ -1,4 +1,5 @@
 * Write functions to display and store high scores
 * Write intro?
-* Take som command line arguments (keys, etc)
+* Take some more command line arguments (keyfile, etc)
 * Fix ugly game over routine in main()
+* Improve delay system.
