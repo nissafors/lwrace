@@ -13,6 +13,10 @@ in a terminal. To start the game, type:
 
 ./lwrace
 
+For help, try:
+
+./lwrace --help
+
 The game is provided as-is with absolutely no warranty whatsoever.
 It is released under the terms of the GNU General Public License (see COPYING
 for details).

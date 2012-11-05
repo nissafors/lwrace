@@ -2,4 +2,3 @@
 * Write intro?
 * Take some more command line arguments (keyfile, etc)
 * Fix ugly game over routine in main()
-* Improve delay system.
