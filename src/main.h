@@ -25,39 +25,20 @@
 /* * * * * *
  * Globals *
  * * * * * */
-int rows, cols; /* Current screen size globals          */
-int level = 1;  /* Level of difficulty, init to default */
-
+/* Current screen size globals */
+int rows, cols;
 /* Globals that may be set by command line arguments (now or in future versions
- * of this program). Initialized with default values. See enemies.c, player.c
- * and fobjects.c for details. */
-
-/* The number of seconds that player is untouchable when a new enemy is added */
-double enemy_nokill_time     = 3;       
-/* The time it takes for a player to travel from side to side of the screen */
-double enemy_to_player_delay_ratio = 8.0 / 4.0;
-double row_to_col_delay_ratio      = 23.0 / 80.0;
-double player_col_delay            = 5.0;
-/* Those are initialized by initglobals() */
-double player_row_delay, enemy_col_delay, enemy_row_delay;
-/* See fobjects for these */
-int    fobj_init_delay_min   = 24;
-int    fobj_init_delay_max   = 48;
-int    fobj_hang_delay_min   = 0;
-int    fobj_hang_delay_max   = 24;
-double fobj_fall_delay_start = 4.8;
-double fobj_fall_delay_end   = 0.72;
-double fobj_base             = 2;
-double fobj_acc              = 16;
-/* Keys globals */
-int    key_esc               = 27;
-int    key_pause             = 'p';
-int    key_stop              = ' ';
-int    key_enter             = '\n';
-int    key_up                = KEY_UP;
-int    key_down              = KEY_DOWN;
-int    key_left              = KEY_LEFT;
-int    key_right             = KEY_RIGHT;
+ * of this program). See enemies.c, player.c and fobjects.c for details. */
+int    level;
+double enemy_nokill_time;
+double enemy_to_player_delay_ratio, row_to_col_delay_ratio;
+double player_col_delay, player_row_delay, enemy_col_delay, enemy_row_delay;
+int    fobj_init_delay_min, fobj_init_delay_max;
+int    fobj_hang_delay_min, fobj_hang_delay_max;
+double fobj_fall_delay_start, fobj_fall_delay_end;
+double fobj_base, fobj_acc;
+int    key_esc, key_pause, key_stop, key_enter;
+int    key_up, key_down, key_left, key_right;
 
 /* * * * * * * *
  * Prototypes  *
@@ -69,3 +50,4 @@ bool_t      drawenemies(struct pos, int);
 bool_t      treasures(struct pos);
 bool_t      fobjects(struct pos, int);
 void        parseargs(int argc, char *argv[]);
+void        setlevel();

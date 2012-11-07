@@ -25,36 +25,6 @@
 #define VIK_LEFT    'h'
 #define VIK_RIGHT   'l'
 
-/*
- * Set delays based on value of global variable level. setlevel() aborts
- * and exit(1) if argc != 1 or if level is something else than 1, 2 or 3.
- * It also sends an error message to stderr.
- */
-static void setlevel(int argc) {
-	extern int level;
-	extern double enemy_row_delay, enemy_col_delay;
-	extern double player_row_delay, player_col_delay;
-	extern double row_to_col_delay_ratio, enemy_to_player_delay_ratio;
-
-	if (argc != 1 || level < 1 || level > 3) {
-		fputs("Error: level is either 1, 2 or 3\n", stderr);
-		exit(0);
-	}
-	/* If level is 1 delays are already set: this is the default */
-	if (level > 1 || level < 4) {
-		if (level == 2) {
-			player_col_delay = player_col_delay * 0.8;
-			enemy_to_player_delay_ratio = 7.0/4.0;
-		}
-		else if (level == 3) {
-			player_col_delay = player_col_delay * 0.6;
-			enemy_to_player_delay_ratio = 6.0/4.0;
-		}
-		player_row_delay = player_col_delay * row_to_col_delay_ratio;
-		enemy_col_delay  = player_col_delay * enemy_to_player_delay_ratio;
-		enemy_row_delay  = enemy_col_delay * row_to_col_delay_ratio;
-	}
-}
 
 /* 
  * Set game control keys to something else than default (currently vi keys)
@@ -87,7 +57,7 @@ void parseargs(int argc, char *argv[])
 		{0, 0, 0, 0}
 	};
 	char *fvalue = NULL;
-	char *helpstring = "Usage: lwrace [-k] [-l <1-3>] [-f <file>]\n"
+	char *helpstring = "Usage: lwrace [-k] [-l <0-9>] [-f <file>]\n"
 		               "       lwrace [-h | -v | -s]\n"
 			"Run terminal mode game Lawyer Race, an enhanced clone of an old "
 			"QBasic game.\nThe original plot was:\n"
@@ -103,11 +73,11 @@ void parseargs(int argc, char *argv[])
 			"  --scorefile <file> of ~/.lwrace.\n"
 			"  -h, --help         Display this help and exit.\n"
 			"  -k, --vikeys       Use hjkl instead of arrow keys.\n"
-			"  -l <1-3>, or       Set difficulty of the game. 1 = easy "
-								  "(default), 2 = medium\n"
-			"  --level <1-3>      and 3 = hard. High scores are level "
+			"  -l <0-9>, or       Set difficulty of the game. 0-2 = easy"
+								  ", 3 = default,\n"
+			"  --level <0-9>      5-9 = medium to hard. High scores are level "
 								  "dependent.\n"
-			"  -s, --scores       Display high score list and exit.\n"
+			"  -s, --scores       Display high scores and exit.\n"
 			"  -v, --version      Output version information and exit.\n\n"
 			"Report bugs to aa@mensa.se\n"
 			"Github project page: <https://github.com/nissafors/lwrace>";
@@ -130,7 +100,10 @@ void parseargs(int argc, char *argv[])
 			case 'l':
 				/* Put numeric held by optarg in global var level */
 				scanfargc = sscanf(optarg, "%d", &level);
-				setlevel(scanfargc);
+				if (scanfargc != 1 || level < 0 || level > MAXLEVEL) {
+					fputs("Error: level out of range\n", stderr);
+					exit(1);
+				}
 				break;
 			case 's':
 				puts("option s not implemented yet");

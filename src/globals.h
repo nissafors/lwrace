@@ -29,6 +29,8 @@
 #define EXIT                      -2
 #define HIT                        1
 #define MISS                       0
+#define MAXLEVEL                   9    /* Remember to change helpstring if
+                                           MAXLEVEL is altered */
 
 /* Symbols for players, targets and enemies etc */
 #define PLAYER      'O'

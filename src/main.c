@@ -15,17 +15,40 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-#include <curses.h>
+#include <curses.h> /* Must be included before main.h */
 #include "globals.h"
 #include "main.h"
 
 /*
- * Set defaults for globals with calculated init values.
+ * Set default values for global settings
  */
-void initglobals() {
-	player_row_delay = player_col_delay * row_to_col_delay_ratio;
-	enemy_col_delay = player_col_delay * enemy_to_player_delay_ratio;
-	enemy_row_delay = enemy_col_delay * row_to_col_delay_ratio;
+static void initglobals() {
+	/* Default level of difficulty */
+	level                       = 3;
+	/* The time in seconds player is untouchable when a new enemy is added */
+	enemy_nokill_time           = 3;       
+	/* I think preferred ratio is 23/80, which will give the same delay for rows
+	 * and cols on a standard terminal screen (which is 80*24, but the last row
+	 * is reserved for score and info display in this game) */
+	row_to_col_delay_ratio      = 23.0 / 80.0;
+	/* See fobjects.c for an explanation of these */
+	fobj_init_delay_min         = 24;
+	fobj_init_delay_max         = 48;
+	fobj_hang_delay_min         = 0;
+	fobj_hang_delay_max         = 24;
+	fobj_fall_delay_start       = 4.8;
+	fobj_fall_delay_end         = 0.72;
+	fobj_base                   = 2;
+	fobj_acc                    = 16;
+	/* Default keys for game control */
+	key_esc                     = 27;
+	key_pause                   = 'p';
+	key_stop                    = ' ';
+	key_enter                   = '\n';
+	key_up                      = KEY_UP;
+	key_down                    = KEY_DOWN;
+	key_left                    = KEY_LEFT;
+	key_right                   = KEY_RIGHT;
 }
 
 /*
@@ -41,6 +64,7 @@ int main(int argc, char *argv[])
 	initglobals();
 	/* Parse and implement command line arguments */
 	parseargs(argc, argv);
+	setlevel();
 
 	/* ncurses settings */
 	initscr();             /* Clear screen and enter curses mode */
