@@ -1,3 +1,11 @@
+/*TODO
+ * Option k
+ * Option s
+ * Option f
+ * Option p
+ */
+
+
 /* Part of Lawyer Race 
    Functions for command line arguments parsing and implementation
    Copyright (C) 2012 Andreas Andersson
@@ -18,99 +26,126 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "globals.h"
+#include "cline.h"
 
-#define VIK_UP      'k'
-#define VIK_DOWN    'j'
-#define VIK_LEFT    'h'
-#define VIK_RIGHT   'l'
-
-
-/* 
- * Set game control keys to something else than default (currently vi keys)
+/*
+ * #include <string.h>
+ * Display help texts. If optarg is not recognized as a keyword for specific
+ * help, display usage info.
  */
-void setkeys() {
-	extern int key_up, key_down, key_left, key_right;
-
-	key_up    = VIK_UP;
-	key_down  = VIK_DOWN;
-	key_left  = VIK_LEFT;
-	key_right = VIK_RIGHT;
+static void showhelp(char *optarg) {
+	if (optarg) {
+		/* If we were called with "-h=keyword" we get "=keyword": remove '=' */
+		if (*optarg == '=')
+			optarg++;
+		if (strcmp(optarg, "keyfile") == 0) {
+			puts(keyfilehelp);
+			return;
+		} else if (strcmp(optarg, "scorefile") == 0) {
+			puts(scorefilehelp);
+			return;
+		}
+	}
+	puts(usage);
 }
 
 /*
+ * #include <stdio.h>
+ * Set global var level to value held by string optarg. Set level
+ * to -1 on error.
+ */
+static void setlevel(char *optarg) {
+	extern int level;
+	int scanfargc;
+
+	scanfargc = sscanf(optarg, "%d", &level);
+	if (scanfargc != 1 || level < 0 || level > MAXLEVEL) {
+		level = -1; /* Error */
+	}
+}
+
+/*
+ * Set path to high score file. Valid formats is "~/path/to/file",
+ * "./path/to/file", "/path/to/file" and "file". hiscrpath will
+ * contain NULL if an error occured.
+ */
+static void sethiscrpath(char *optarg) {
+	extern char *hiscore_file_path;
+	hiscore_file_path = expandpath(optarg);
+}
+
+/*
+ * Set path to keys file. Similar behaviour as sethiscrpath.
+ */
+static void setkeypath(char *optarg) {
+	extern char *key_file_path;
+	key_file_path = expandpath(optarg);
+}
+
+/*
+ * #include <unistd.h>
+ * #include <string.h>
  * Parse command line arguments
  */
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+#define OPTIONS_COUNT 7 /* Number of posts in longopts[] */
 void parseargs(int argc, char *argv[])
 {
 	extern int level;
-	int c;
+	int c, i;
+	char argstring[OPTIONS_COUNT + 1];
+
 	/* One-char and words accepted as command line arguments */
-	char *optstring = "f:hkl:sv";
+	char *optstring = "l:f:h::k:psv";
+	/* If you add or remove options, change OPTIONS_COUNT accordingly */
 	struct option longopts[] = {
-		{"scorefile",   required_argument,  NULL, 'f'},
-		{"help",        no_argument,        NULL, 'h'},
-		{"vikeys",      no_argument,        NULL, 'k'},
 		{"level",       required_argument,  NULL, 'l'},
+		{"scorefile",   required_argument,  NULL, 'f'},
+		{"help",        optional_argument,  NULL, 'h'},
+		{"keyfile",     required_argument,  NULL, 'k'},
+		{"plot",        no_argument,        NULL, 'p'},
 		{"scores",      no_argument,        NULL, 's'},
 		{"version",     no_argument,        NULL, 'v'},
 		{0, 0, 0, 0}
 	};
-	char *fvalue = NULL;
-	char *helpstring = "Usage: lwrace [-k] [-l <0-9>] [-f <file>]\n"
-		               "       lwrace [-h | -v | -s]\n"
-			"Run terminal mode game Lawyer Race, an enhanced clone of an old "
-			"QBasic game.\nThe original plot was:\n"
-			"\"Once mr O needed a lawyer for some reason, and so he hired one. "
-			"When the\ncase was lost and all mr O:s money was gone with the "
-			"wind, the lawyer\noffice still wanted its fee, and they set after "
-			"mr O, who had fled to\nthe mountains, looking for dollars. Rocks "
-			"are falling all around him while\nmr O is struggling to escape "
-			"wild lawyers and to collect money enough to\nset him free. Play "
-			"the game to find out if mr O will make it!\"\n"
-			"Default game control: use arrow keys to move and space to stop.\n"
-			"\n  -f  <file>, or     Use high scores file <file> instead\n"
-			"  --scorefile <file> of ~/.lwrace.\n"
-			"  -h, --help         Display this help and exit.\n"
-			"  -k, --vikeys       Use hjkl instead of arrow keys.\n"
-			"  -l <0-9>, or       Set difficulty of the game. 0-2 = easy"
-								  ", 3 = default,\n"
-			"  --level <0-9>      5-9 = medium to hard. High scores are level "
-								  "dependent.\n"
-			"  -s, --scores       Display high scores and exit.\n"
-			"  -v, --version      Output version information and exit.\n\n"
-			"Report bugs to aa@mensa.se\n"
-			"Github project page: <https://github.com/nissafors/lwrace>";
 
-	/* Parse command line arguments and take action */
+	/* Build a string containing all letters in optstring that was passed.
+	 * If option has argument, take action so we don't have to save optarg. */
+	i = 0;
 	while ((c = getopt_long(argc, argv, optstring, longopts, NULL)) != -1) {
+		/* Invalid option or argument. getop_long() displays error msg for us */
+		if (c == '?' || c == ':')
+			exit(1);
+		/* Halt if argument was passed twice. */
+		if ( (strchr(argstring, c)) ) {
+			fprintf(stderr, "%s: option may be given only once -- %c\n",
+			        argv[0], c);
+			exit(1);
+		}
+		/* JUMP TO CONCLUSIONS SECTION - Args that should be processed
+		 * immediately when they show up */
 		switch (c) {
-			int scanfargc;
-			case 'h':
-				puts(helpstring);
-				exit(0);
-			case 'f':
-				fvalue = optarg;
-				printf("f %s:\n", fvalue);
-				puts("option f not implemented yet");
-				break;
-			case 'k':
-				setkeys();
-				break;
 			case 'l':
-				/* Put numeric held by optarg in global var level */
-				scanfargc = sscanf(optarg, "%d", &level);
-				if (scanfargc != 1 || level < 0 || level > MAXLEVEL) {
-					fputs("Error: level out of range\n", stderr);
-					exit(1);
-				}
+				setlevel(optarg);
 				break;
-			case 's':
-				puts("option s not implemented yet");
+			case 'f':
+				sethiscrpath(optarg);
 				break;
-			case 'v':
-				puts("Lawyer Race version 0.1");
+			case 'h':
+				showhelp(optarg); /* Always be helpful... */
 				exit(0);
+			case 'k':
+				setkeypath(optarg);
+				break;
+			default:
+				/* Execute later: Save letter to end of string */
+				argstring[i++] = (char)c;
 		}
 	}
+	argstring[i] = '\0'; /* Terminate string */
+	puts(argstring);
 }

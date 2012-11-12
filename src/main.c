@@ -15,8 +15,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-#include <curses.h> /* Must be included before main.h */
-#include "globals.h"
+#include <curses.h>     /* Must be included before main.h */
+#include "globals.h"    /* Must be included before main.h */
 #include "main.h"
 
 /*
@@ -24,31 +24,31 @@
  */
 static void initglobals() {
 	/* Default level of difficulty */
-	level                       = 3;
+	level                   = 3;
 	/* The time in seconds player is untouchable when a new enemy is added */
-	enemy_nokill_time           = 3;       
+	enemy_nokill_time       = 3;       
 	/* I think preferred ratio is 23/80, which will give the same delay for rows
 	 * and cols on a standard terminal screen (which is 80*24, but the last row
 	 * is reserved for score and info display in this game) */
-	row_to_col_delay_ratio      = 23.0 / 80.0;
+	row_to_col_delay_ratio  = 23.0 / 80.0;
 	/* See fobjects.c for an explanation of these */
-	fobj_init_delay_min         = 24;
-	fobj_init_delay_max         = 48;
-	fobj_hang_delay_min         = 0;
-	fobj_hang_delay_max         = 24;
-	fobj_fall_delay_start       = 4.8;
-	fobj_fall_delay_end         = 0.72;
-	fobj_base                   = 2;
-	fobj_acc                    = 16;
+	fobj_init_delay_min     = 24;
+	fobj_init_delay_max     = 48;
+	fobj_hang_delay_min     = 0;
+	fobj_hang_delay_max     = 24;
+	fobj_fall_delay_start   = 4.8;
+	fobj_fall_delay_end     = 0.72;
+	fobj_base               = 2;
+	fobj_acc                = 16;
 	/* Default keys for game control */
-	key_esc                     = 27;
-	key_pause                   = 'p';
-	key_stop                    = ' ';
-	key_enter                   = '\n';
-	key_up                      = KEY_UP;
-	key_down                    = KEY_DOWN;
-	key_left                    = KEY_LEFT;
-	key_right                   = KEY_RIGHT;
+	key_esc                 = 27;
+	key_pause               = 'p';
+	key_stop                = ' ';
+	key_enter               = '\n';
+	key_up                  = KEY_UP;
+	key_down                = KEY_DOWN;
+	key_left                = KEY_LEFT;
+	key_right               = KEY_RIGHT;
 }
 
 /*
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 	initglobals();
 	/* Parse and implement command line arguments */
 	parseargs(argc, argv);
-	setlevel();
+	setspeed();
 
 	/* ncurses settings */
 	initscr();             /* Clear screen and enter curses mode */
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 		/* Update and print players position and score */
 		plpos = drawplayer(pldir, plpos);
 		score += treasures(plpos);
-		printscore(score);
+		printstatus(score);
 		/* Update and draw enemies and falling objects. These return
 		 * HIT (= TRUE) if player ran into any of them. */
 		if(drawenemies(plpos, score) || fobjects(plpos, score)) {

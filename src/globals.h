@@ -29,8 +29,9 @@
 #define EXIT                      -2
 #define HIT                        1
 #define MISS                       0
-#define MAXLEVEL                   9    /* Remember to change helpstring if
-                                           MAXLEVEL is altered */
+#define MAXLEVEL                   9    /* Remember to change helpstring and
+                                           optstring in cline.c if you change
+                                           MAXLEVEL!!! */
 
 /* Symbols for players, targets and enemies etc */
 #define PLAYER      'O'
@@ -39,6 +40,10 @@
 #define TREASURE    '$'
 #define OBJECT      'o'
 #define BACKGROUND  ' '
+
+/* Files */
+#define DEFAULT_KEYSFILE_PATH "~/.lwrace/keys"
+#define DEFAULT_SCOREFILE_PATHSKEL "~/.lwrace/highscores"
 
 /* Structs */
 struct pos {

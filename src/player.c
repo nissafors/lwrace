@@ -16,6 +16,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include <curses.h>
+#include <string.h>
 #include "globals.h"
 
 /*
@@ -72,20 +73,27 @@ struct pos drawplayer(dir_t dir, struct pos curpos) {
 }
 
 /*
- * Print score at last row. Erase old status row first if screen size changed
+ * #include <curses.h>
+ * #include <string.h>
+ * Print score and level at last row. Erase old status row first if
+ * screen size changed
  */
-void printscore (int score) {
+void printstatus (int score) {
 	extern int rows;
 	extern int cols;
+	extern int level;
 	static int oldscrrow;
 	int        clrcol;
+	char      *scoref = "Score: %d";
+	char      *levelf = "Level: %d";
 	
 	/* Erase old status row if screensize changed */
 	if (oldscrrow != rows)
 		for (clrcol = 0; clrcol < cols; clrcol++)
 			mvaddch(oldscrrow, clrcol, BACKGROUND);
-	/* Print score */
-	mvprintw(rows, 0,"Score: %d", score);
+	/* Print score and level */
+	mvprintw(rows, 0, scoref, score);
+	mvprintw(rows, cols - strlen(levelf), levelf, level);
 	/* Save current status row position */
 	oldscrrow = rows;
 }

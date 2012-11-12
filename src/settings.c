@@ -4,7 +4,7 @@
  * Set delays based on value of global variable level.
  * Level may be a number ranging from 0 to MAXLEVEL.
  */
-void setlevel() {
+void setspeed() {
 	extern int level;
 	extern double enemy_row_delay, enemy_col_delay;
 	extern double player_row_delay, player_col_delay;

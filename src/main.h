@@ -39,15 +39,16 @@ double fobj_fall_delay_start, fobj_fall_delay_end;
 double fobj_base, fobj_acc;
 int    key_esc, key_pause, key_stop, key_enter;
 int    key_up, key_down, key_left, key_right;
+char  *key_file_path, *hiscore_file_path;
 
 /* * * * * * * *
  * Prototypes  *
  * * * * * * * */
 dir_t       getdir(dir_t);
 struct pos  drawplayer(dir_t, struct pos);
-void        printscore(int);
+void        printstatus(int);
 bool_t      drawenemies(struct pos, int);
 bool_t      treasures(struct pos);
 bool_t      fobjects(struct pos, int);
 void        parseargs(int argc, char *argv[]);
-void        setlevel();
+void        setspeed();
