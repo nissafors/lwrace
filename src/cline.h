@@ -14,8 +14,15 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
+/* Defines */
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+#define TRUE 1
+#define OPTIONS_COUNT 7 /* Number of posts in longopts[] */
+
 /* Prototypes */
-char *expandpath(char *path);
+char *expandpath(char *path, int isfile);
 
 /*
  * Some command line arguments outputs a lot of text. These strings are kept

@@ -37,9 +37,6 @@
  */
 static void showhelp(char *optarg) {
 	if (optarg) {
-		/* If we were called with "-h=keyword" we get "=keyword": remove '=' */
-		if (*optarg == '=')
-			optarg++;
 		if (strcmp(optarg, "keyfile") == 0) {
 			puts(keyfilehelp);
 			return;
@@ -67,37 +64,18 @@ static void setlevel(char *optarg) {
 }
 
 /*
- * Set path to high score file. Valid formats is "~/path/to/file",
- * "./path/to/file", "/path/to/file" and "file". hiscrpath will
- * contain NULL if an error occured.
- */
-static void sethiscrpath(char *optarg) {
-	extern char *hiscore_file_path;
-	hiscore_file_path = expandpath(optarg);
-}
-
-/*
- * Set path to keys file. Similar behaviour as sethiscrpath.
- */
-static void setkeypath(char *optarg) {
-	extern char *key_file_path;
-	key_file_path = expandpath(optarg);
-}
-
-/*
  * #include <unistd.h>
  * #include <string.h>
- * Parse command line arguments
+ * Parse command line arguments. Depends on a few #defines i cline.h
  */
-#ifndef PATH_MAX
-#define PATH_MAX 4096
-#endif
-#define OPTIONS_COUNT 7 /* Number of posts in longopts[] */
 void parseargs(int argc, char *argv[])
 {
 	extern int level;
+	extern char *key_file_path;
+	extern char *hiscore_file_path;
 	int c, i;
 	char argstring[OPTIONS_COUNT + 1];
+	argstring[0] = '\0';
 
 	/* One-char and words accepted as command line arguments */
 	char *optstring = "l:f:h::k:psv";
@@ -126,6 +104,9 @@ void parseargs(int argc, char *argv[])
 			        argv[0], c);
 			exit(1);
 		}
+		/* Remove = in front of optarg if present */
+		if(optarg && *optarg == '=')
+			optarg++;
 		/* JUMP TO CONCLUSIONS SECTION - Args that should be processed
 		 * immediately when they show up */
 		switch (c) {
@@ -133,19 +114,48 @@ void parseargs(int argc, char *argv[])
 				setlevel(optarg);
 				break;
 			case 'f':
-				sethiscrpath(optarg);
+				hiscore_file_path = expandpath(optarg, TRUE);
 				break;
 			case 'h':
 				showhelp(optarg); /* Always be helpful... */
 				exit(0);
 			case 'k':
-				setkeypath(optarg);
+				key_file_path = expandpath(optarg, TRUE);
 				break;
-			default:
-				/* Execute later: Save letter to end of string */
-				argstring[i++] = (char)c;
 		}
+		/* Save letter to end of string */
+		argstring[i++] = (char)c;
+		argstring[i] = '\0'; /* Terminate string */
 	}
-	argstring[i] = '\0'; /* Terminate string */
-	puts(argstring);
+	/* Check for illegal combinations = p + any, s + any, v + any */
+	if ( (strchr(argstring, 'p') || strchr(argstring, 's') ||
+	      strchr(argstring, 'v')) && strlen(argstring) > 1 ) {
+		fprintf(stderr, "%s: incompatible arguments -- %s\n", argv[0],
+		        argstring);
+		exit(1);
+	}
+	/* Did any option with argument fail? */
+	if (level == -1) {
+		fprintf(stderr, "%s: level out of range\n", argv[0]);
+		exit(1);
+	}
+	if ( (strchr(argstring, 'f') && !hiscore_file_path) ||
+	     (strchr(argstring, 'k') && !key_file_path) )
+	{
+		fprintf(stderr, "%s: could not expand path\n", argv[0]);
+		exit(1);
+	}
+	/* Execute remaining commands */
+	if (*argstring == 'p') {
+		puts(plot);
+		exit(0);
+	}
+	if (*argstring == 'v') {
+		puts(version);
+		exit(0);
+	}
+	if (*argstring == 's') {
+		fprintf(stderr, "%s: option not yet implemented -- s\n", argv[0]);
+		exit(1);
+	}
 }
