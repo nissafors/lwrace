@@ -42,8 +42,8 @@
 #define BACKGROUND  ' '
 
 /* Files */
-#define DEFAULT_KEYSFILE_PATH "~/.lwrace/keys"
-#define DEFAULT_SCOREFILE_PATHSKEL "~/.lwrace/highscores"
+#define DEFAULT_KEYSFILE "~/.lwrace/keys"
+#define DEFAULT_SCOREFILE "~/.lwrace/highscores"
 
 /* Structs */
 struct pos {

@@ -21,6 +21,7 @@
 #include "globals.h"
 #include "enemies.h"
 
+#include <unistd.h>
 /* 
  * Draw enemies hunting player. Enemies are added at ADD_ENEMY_SCORE_INTERVAL
  * up to MAX_ENEMIES. Player will be immortal for "enemy_nokill_time" seconds
@@ -54,8 +55,8 @@ bool_t drawenemies(struct pos plpos, int score) {
 	if ((float)score / (float)ADD_ENEMY_SCORE_INTERVAL == encount
 	  && encount < MAX_ENEMIES) { 
 		/* Randomize starting position for the new enemy */
-		enpos[encount].row = genrand(0,rows);
-		enpos[encount].col = genrand(0,cols);
+		lastpos[encount].row = genrand(0,rows);
+		lastpos[encount].col = genrand(0,cols);
 		/* Every new enemy may have a different delay than the previous one as
 		 * specified with ENEMY_DELAY_DIFF. The actual delay is calculated for
 		 * each enemy below as it's dependent on current screen size */

@@ -49,6 +49,8 @@ static void initglobals() {
 	key_down                = KEY_DOWN;
 	key_left                = KEY_LEFT;
 	key_right               = KEY_RIGHT;
+	key_file_path           = NULL;
+	hiscore_file_path       = NULL;
 }
 
 /*
@@ -68,7 +70,7 @@ int main(int argc, char *argv[])
 
 	/* ncurses settings */
 	initscr();             /* Clear screen and enter curses mode */
-	raw();                 /* Line buffering disabled */
+	cbreak();              /* Line buffering disabled */
 	keypad(stdscr, TRUE);  /* Enable F1-F12, arrow keys etc */
 	noecho();              /* Supress unnecessary echoing */
 	curs_set(0);           /* Hide the cursor */

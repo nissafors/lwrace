@@ -3,7 +3,8 @@ PROGRAM := lwrace
 CFLAGS := -Wall -g
 LFLAGS := -lncurses -lm
 VPATH := src
-OBJECTS := main.o player.o enemies.o treasures.o getnow.o genrand.o drawfigure.o fobjects.o cline.o settings.o path.o
+OBJECTS := main.o player.o enemies.o treasures.o getnow.o genrand.o drawfigure.o \
+fobjects.o cline.o settings.o path.o score.o
 # Cygwin hides curses.h, must specify include path:
 ifeq ($(shell uname), Cygwin)
 	INC_PATH := -I/usr/include/ncurses/

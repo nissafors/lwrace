@@ -23,6 +23,7 @@
 
 /* Prototypes */
 char *expandpath(char *path, int isfile);
+void printscores(char *path);
 
 /*
  * Some command line arguments outputs a lot of text. These strings are kept
@@ -39,16 +40,16 @@ static char *version = "Lawyer race version 0.1";
 
 static char *usage = 
 "Usage: lwrace [-l <0-9>] [-f <file>] [-k <file>]\n"
-"       lwrace [-h [keyword] | -p | -s [-f <file>] | -v ]\n"
+"       lwrace [-h[=keyword] | -p | -s [-f <file>] [-l <level>] | -v ]\n"
 "Run terminal mode game Lawyer Race, an enhanced clone of an old QBasic game.\n"
 "Default game control: use arrow keys to move and space to stop.\n\n"
-"  -<0-9>, or         Set difficulty of the game. 0-2 = easy, 3 = default,\n"
-"  --level <0-9>      4-9 = medium to hard. High scores are level dependent.\n"
 "  -f  <file>, or     Read and store high scores to and from <file>.\n"
 "  --scorefile <file> Type \"lwrace --help=scorefile\" for details.\n"
 "  -h, --help         Display this help and exit.\n"
 "  -k <file>, or      Use keys defined in <file> for game control.\n"
 "  --keyfile <file>   Type \"lwrace --help=keyfile\" for details.\n"
+"  -l <0-9>, or       Set difficulty of the game. 0-2 = easy, 3 = default,\n"
+"  --level <0-9>      4-9 = medium to hard. High scores are level dependent.\n"
 "  -p, --plot         Display the original game plot and exit.\n"
 "  -s, --scores       Display high scores and exit.\n"
 "  -v, --version      Output version information and exit.\n\n"
@@ -101,5 +102,5 @@ static char *plot =
 "case was lost and all mr O:s money was gone with the wind, the lawyer\n"
 "office still wanted its fee, and they set after mr O, who had fled to the\n"
 "mountains, looking for dollars. Rocks are falling all around him while mr O\n"
-"is struggling to escape wild lawyers and to collect money enough to\nset him\n"
+"is struggling to escape wild lawyers and to collect money enough to set him\n"
 "free. Play the game to find out if mr O will make it!\"";

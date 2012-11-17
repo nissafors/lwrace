@@ -1,11 +1,3 @@
-/*TODO
- * Option k
- * Option s
- * Option f
- * Option p
- */
-
-
 /* Part of Lawyer Race 
    Functions for command line arguments parsing and implementation
    Copyright (C) 2012 Andreas Andersson
@@ -27,6 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <error.h>
 #include "globals.h"
 #include "cline.h"
 
@@ -61,6 +54,32 @@ static void setlevel(char *optarg) {
 	if (scanfargc != 1 || level < 0 || level > MAXLEVEL) {
 		level = -1; /* Error */
 	}
+}
+
+/*
+ * #include <error.h>
+ * Check for illegal combinations of arguments. Return 0 if all is ok.
+ * Illegal: p + any, v + any, s + any except f & l
+ */
+int incompatibleopts(char *argstring) {
+	int errbool = 0;
+
+	if ( (strchr(argstring, 'p') || strchr(argstring, 'v')) &&
+	      strlen(argstring) > 1 )
+	{
+		errbool = 1;
+	}
+	if (strchr(argstring, 's')) {
+		if (strlen(argstring) > 3)
+			errbool = 1;
+		if (strlen(argstring) == 3)
+			if ( !(strchr(argstring, 'f') && strchr(argstring, 'l')) )
+				errbool = 1;
+		if (strlen(argstring) == 2)
+			if ( !(strchr(argstring, 'f') || strchr(argstring, 'l')) )
+				errbool = 1;
+	}
+	return errbool;
 }
 
 /*
@@ -127,13 +146,10 @@ void parseargs(int argc, char *argv[])
 		argstring[i++] = (char)c;
 		argstring[i] = '\0'; /* Terminate string */
 	}
-	/* Check for illegal combinations = p + any, s + any, v + any */
-	if ( (strchr(argstring, 'p') || strchr(argstring, 's') ||
-	      strchr(argstring, 'v')) && strlen(argstring) > 1 ) {
-		fprintf(stderr, "%s: incompatible arguments -- %s\n", argv[0],
-		        argstring);
-		exit(1);
-	}
+	
+	/* Check for illegal combination of options */
+	if (incompatibleopts(argstring))
+		error(1, 0, "illegal combination of arguments -- %s", argstring);
 	/* Did any option with argument fail? */
 	if (level == -1) {
 		fprintf(stderr, "%s: level out of range\n", argv[0]);
@@ -145,7 +161,14 @@ void parseargs(int argc, char *argv[])
 		fprintf(stderr, "%s: could not expand path\n", argv[0]);
 		exit(1);
 	}
+
 	/* Execute remaining commands */
+	if (strchr(argstring, 's')) {
+		if (!hiscore_file_path)
+			hiscore_file_path = expandpath(DEFAULT_SCOREFILE, TRUE);
+		printscores(hiscore_file_path);
+		exit(0);
+	}
 	if (*argstring == 'p') {
 		puts(plot);
 		exit(0);
@@ -153,9 +176,5 @@ void parseargs(int argc, char *argv[])
 	if (*argstring == 'v') {
 		puts(version);
 		exit(0);
-	}
-	if (*argstring == 's') {
-		fprintf(stderr, "%s: option not yet implemented -- s\n", argv[0]);
-		exit(1);
 	}
 }
