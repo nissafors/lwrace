@@ -93,6 +93,7 @@ void parseargs(int argc, char *argv[])
 	extern char *key_file_path;
 	extern char *hiscore_file_path;
 	int c, i;
+	int len;
 	char argstring[OPTIONS_COUNT + 1];
 	argstring[0] = '\0';
 
@@ -166,6 +167,19 @@ void parseargs(int argc, char *argv[])
 	if (strchr(argstring, 's')) {
 		if (!hiscore_file_path)
 			hiscore_file_path = expandpath(DEFAULT_SCOREFILE, TRUE);
+		if (strchr(argstring, 'l')) {
+			/* level was set by user so he want's to print one level only. By
+			 * appending ".<level>" to path we pass that info to printscores().
+			 * expandpath() returns a malloc() ptr, so we can use realloc() */
+			len = strlen(hiscore_file_path);
+			hiscore_file_path = realloc(hiscore_file_path,(len+3)*sizeof(char));
+			if (!hiscore_file_path) {
+				error(1, 0, "memory error while processing argument -- s");
+			}
+			hiscore_file_path[len]     = '.';
+			hiscore_file_path[len + 1] = '0' + (char)level;
+			hiscore_file_path[len + 2] = '\0';
+		}
 		printscores(hiscore_file_path);
 		exit(0);
 	}

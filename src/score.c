@@ -145,14 +145,13 @@ void printscores(char *path) {
 
 	/* Is path *.<number>? */
 	len = strlen(path);
-	if ((path[len - 1] >= '0' && path[len - 1] <= MAXLEVEL) && 
+	if ((path[len - 1] >= '0' && path[len - 1] <= '0' + MAXLEVEL) && 
 	     path[len - 2] == '.')
 	{
 		/* Yes, this is a scorefile */
-		fromlevel = tolevel = '0' - path[len - 1];
+		fromlevel = tolevel = path[len - 1] - '0';
 		/* Remove .<number> so we can treat all paths the same below */
 		path[len - 2] = '\0';
-
 	}
 	else
 	{
