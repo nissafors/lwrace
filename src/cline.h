@@ -22,7 +22,6 @@
 #define OPTIONS_COUNT 7 /* Number of posts in longopts[] */
 
 /* Prototypes */
-char *expandpath(char *path, int isfile);
 void printscores(char *path);
 
 /*

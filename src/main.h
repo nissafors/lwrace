@@ -52,3 +52,4 @@ bool_t      treasures(struct pos);
 bool_t      fobjects(struct pos, int);
 void        parseargs(int argc, char *argv[]);
 void        setspeed();
+int         is_high_score(int score, int level, char *path);

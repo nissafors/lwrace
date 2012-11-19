@@ -15,6 +15,51 @@ struct hiscore {
 };
 
 /*
+ * #include <stdlib.h>
+ * #include <string.h>
+ * malloc() space for <string> + <extend_by> nr of chars. Example: If <string>
+ * is "hello" and <extend_by> = 2 a pointer to a heap area with room for 8 chars
+ * will be returned: 5 from string, 2 from extend_by and 1 extra for terminating
+ * \0. Allocated space will be padded with spaces and terminated with \0.
+ * Return NULL on error.
+ */
+char *extend_str_space(char *string, int extend_by) {
+	char *ext;
+	int len, i;
+
+	/* Make space and copy string into it */
+	len = strlen(string) + 1;
+	ext = malloc((len + extend_by) * sizeof(char));
+	if(!ext)
+		return NULL;
+	ext = strcpy(ext, string);
+	/* Pad with spaces and terminate */
+	for (i = len - 1; i < len + extend_by - 1; i++) {
+		ext[i] = ' ';
+	}
+	ext[len + extend_by - 1] = '\0';
+
+	return ext;
+}
+
+/*
+ * #include <string.h>
+ * Replace the 2 last chars int <path> with .<number>. Example: <path> is "file"
+ * and <number> = 5, then <path> will be transformed to "fi.5". Return pointer
+ * to <path>.
+ */
+char *append_dotnr_to_path(char *path, int number) {
+	int len;
+
+	len = strlen(path);
+	path[len - 2] = '.';
+	path[len - 1] = '0' + number;
+	path[len] = '\0';
+
+	return path;
+}
+
+/*
  * Show a dialog box and ask user for a name. Return a pointer to
  * a static array containing a string with the name. No error checking!
  */
@@ -114,6 +159,42 @@ static struct hiscore *readscores (char *path) {
 }
 
 /*
+ * #include <stdlib.h>
+ * #include <string.h>
+ * Compare players score with lowest score from file to determine if it
+ * qualifies as high score. Return non-zero if it does and zero if not
+ * <path> will be prepended with .<level>, i.e. if path is ~/file and
+ * level is 3, then is_high_score() will try to read "file.3". If path is
+ * NULL, try DEFAULT_SCOREFILE.<level>. If file not found, this is a high
+ * score: return true.
+ */
+int is_high_score(int score, int level, char *path) {
+	struct hiscore *scores;
+	char *extpath;
+	int i, lastscore = -1;
+
+	if (!path) {
+		path = expandpath(DEFAULT_SCOREFILE);
+	}
+	extpath = extend_str_space(path, 2);
+	extpath = append_dotnr_to_path(extpath, level);
+
+	scores = readscores(extpath);
+	if (!scores) {
+		return 1; /* no such file or directory, so this is a high score */
+	}
+	
+	for (i = 0; i <= MAX_SCORES_PER_FILE; i++) {
+		if (!(scores+i)->name)
+			break;
+		lastscore = (scores+i)->score;
+	}
+	if (score > lastscore)
+		return 1;
+	return 0;
+}
+
+/*
  * #include <stdio.h>
  * Draw a dashed horizontal line with <length> number of -'s. Terminate with
  * a newline.
@@ -142,7 +223,7 @@ void printscores(char *path) {
 	char *heading = "  High Scores - level %d\n";
 	char fromlevel, tolevel;
 	int len, i;
-
+	
 	/* Is path *.<number>? */
 	len = strlen(path);
 	if ((path[len - 1] >= '0' && path[len - 1] <= '0' + MAXLEVEL) && 
@@ -160,14 +241,10 @@ void printscores(char *path) {
 		tolevel = MAXLEVEL;
 	}
 
-	len = strlen(path);
-	extpath = malloc((len + 3) * sizeof(char));
-	extpath = strcpy(extpath, path);
+	extpath = extend_str_space(path, 2);
 	for ( ; fromlevel <= tolevel; fromlevel++) {
 		/* Add .<number> to path */
-		extpath[len] = '.';
-		extpath[len+1] = '0' + fromlevel;
-		extpath[len+2] = '\0';
+		extpath = append_dotnr_to_path(extpath, fromlevel);
 		/* Read scores to array and print a heading */
 		if ( (scores = readscores(extpath)) ) {
 			dashes(strlen(heading) + 2);

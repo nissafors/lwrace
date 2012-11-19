@@ -107,6 +107,9 @@ int main(int argc, char *argv[])
 	nodelay(stdscr, FALSE);
 	while(getch() != key_enter)
 		;
+	if (is_high_score(score, level, hiscore_file_path)) {
+		/*** READ NAME AND STORE SCORE ***/
+	}
 	endwin();               /* Exit curses mode */
 	return 0;
 }
