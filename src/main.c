@@ -54,6 +54,18 @@ static void initglobals() {
 }
 
 /*
+ * Show informative message to player and wait for keypress
+ */
+void game_over() {
+	mvprintw(rows/3,cols/2-6,"GAME OVER!");
+	mvprintw(rows-rows/3,cols/2-6,"Press enter");
+	refresh();
+	nodelay(stdscr, FALSE);
+	while(getch() != key_enter)
+		;
+}
+
+/*
  * Main routine
  */
 int main(int argc, char *argv[])
@@ -61,6 +73,7 @@ int main(int argc, char *argv[])
 	struct pos plpos;      /* Players position on screen */
 	dir_t pldir;           /* Players direction */
 	int score;             /* Players score */
+	char *name;            /* Players name */
 	
 	/* Set some globals */
 	initglobals();
@@ -96,20 +109,14 @@ int main(int argc, char *argv[])
 		 * HIT (= TRUE) if player ran into any of them. */
 		if(drawenemies(plpos, score) || fobjects(plpos, score)) {
 			mvaddch(plpos.row, plpos.col, DEAD);  /* Player killed */
+			game_over();
+			if (is_high_score(score, level, hiscore_file_path)) {
+				/*** Store and print scores ***/
+			}
 			break;
 		}
 	}
 
-	/*** UGLY GAME OVER PLACEHOLDER!!! ***/
-	mvprintw(rows/3,cols/2-6,"GAME OVER!");
-	mvprintw(rows-rows/3,cols/2-6,"Press enter");
-	refresh();
-	nodelay(stdscr, FALSE);
-	while(getch() != key_enter)
-		;
-	if (is_high_score(score, level, hiscore_file_path)) {
-		/*** READ NAME AND STORE SCORE ***/
-	}
 	endwin();               /* Exit curses mode */
 	return 0;
 }

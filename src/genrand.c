@@ -19,9 +19,16 @@
 #include <sys/time.h>
 
 int genrand(int min, int max) {
+	static long lastseed;
+	long seed;
 	struct timeval now;
 	gettimeofday(&now, NULL);
-	long seed = now.tv_sec * now.tv_usec;
+	
+	seed = now.tv_sec * now.tv_usec;
+	if (seed == lastseed) {
+		seed++;
+	}
+	lastseed = seed;
 
 	srand(seed);
 	return rand() % (max-min) + min;

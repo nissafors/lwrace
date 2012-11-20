@@ -61,3 +61,4 @@ struct pos  drawfigure (struct pos, char, struct pos, char, int, int);
 double      getnow();
 int         genrand(int, int);
 char        *expandpath(char *path, int isfile);
+void        printscores(char *path, int level);

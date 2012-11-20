@@ -174,7 +174,7 @@ int is_high_score(int score, int level, char *path) {
 	int i, lastscore = -1;
 
 	if (!path) {
-		path = expandpath(DEFAULT_SCOREFILE);
+		path = expandpath(DEFAULT_SCOREFILE, 0);
 	}
 	extpath = extend_str_space(path, 2);
 	extpath = append_dotnr_to_path(extpath, level);
@@ -195,6 +195,50 @@ int is_high_score(int score, int level, char *path) {
 }
 
 /*
+ * Write high score to file. <path> will be appended with .<level> by function.
+ * If <path>.<level> can't be found, create it. If it failes, warn and ask user
+ * for permission to write to DEFAULT_SCOREFILE.<level> instead. If he won't let
+ * us, exit. If we fail, exit with an error.
+ */
+void writescores(char* path, char *name, int score, int level) {
+	struct hiscore *scores;
+	char *extpath;
+	char *fstr = "%s\n%d\n";
+	int i, writes;
+	
+	/* Append path, default if none given, with .<level> */
+	if (!path) {
+		path = expandpath(DEFAULT_SCOREFILE, 0);
+	}
+	extpath = extend_str_space(path, 2);
+	extpath = append_dotnr_to_path(extpath, level);
+
+	/* Read scores if file exists */
+	scores = readscores(extpath);
+
+	/* Print out scores to file, inserting new score at it's place */
+	if (!scores) {
+		printf(fstr, name, score);
+	} else {
+		for (writes = 0, i = 0; writes <= MAX_SCORES_PER_FILE; writes++, i++) {
+			if (!(scores + i)->name) {
+				if (level >= 0) {
+					printf(fstr, name, score);
+				}
+				break;
+			}
+			if (score > (scores + i)->score) {
+				printf(fstr, name, score);
+				score = -1; /* Don't print it again */
+				i--;
+			} else {
+				printf(fstr, (scores + i)->name, (scores + i)->score);
+			}
+		}
+	}
+}
+
+/*
  * #include <stdio.h>
  * Draw a dashed horizontal line with <length> number of -'s. Terminate with
  * a newline.
@@ -212,31 +256,22 @@ void dashes(length) {
  * #include <stdio.h>
  * #include <string.h>
  * Output at most MAX_SCORES_PER_FILE scores from array recieved from
- * readscores(path) in file "path" to stdout. If <path> does not end with
- * ".<number in range 0 to MAXLEVEL" print all existing files named "<path>.0"
- * to "<path>.<MAXLEVEL>".
+ * readscores(path) in file <path>.<level> to stdout. "path" should NOT contain
+ * trailing .<level>. If level is non-valid (negative or >MAXLEVEL), print all
+ * files matching "path".
  */
-void printscores(char *path) {
+void printscores(char *path, int level) {
 	struct hiscore *scores;
 	char *extpath = NULL;
 	int printed_count = 0;
 	char *heading = "  High Scores - level %d\n";
 	char fromlevel, tolevel;
-	int len, i;
+	int i;
 	
-	/* Is path *.<number>? */
-	len = strlen(path);
-	if ((path[len - 1] >= '0' && path[len - 1] <= '0' + MAXLEVEL) && 
-	     path[len - 2] == '.')
-	{
-		/* Yes, this is a scorefile */
-		fromlevel = tolevel = path[len - 1] - '0';
-		/* Remove .<number> so we can treat all paths the same below */
-		path[len - 2] = '\0';
-	}
-	else
-	{
-		/* Path is not a scorefile. Print all scorefiles in folder */
+	if (level >= 0 && level <= MAXLEVEL) {
+		fromlevel = tolevel = level;
+	} else {
+		/* No valid level: Print all scorefiles in folder */
 		fromlevel = 0;
 		tolevel = MAXLEVEL;
 	}
@@ -269,5 +304,5 @@ void printscores(char *path) {
 		}
 	}
 	if (printed_count == 0)
-		error(1, 0, "unable to print high score file");
+		error(1, 0, "error reading high score file");
 }
