@@ -20,7 +20,7 @@
 
 /* Get screen size using curses function getmaxyx. Set aside one row as status
  * row for scores and messages. */
-#define GETGAMEAREA(R, C)  getmaxyx(stdscr, (R), (C)), rows--;
+#define GETGAMEAREA(R, C)  getmaxyx(stdscr, (R), (C)), rows--
 
 /* * * * * *
  * Globals *
@@ -44,12 +44,12 @@ char  *key_file_path, *hiscore_file_path;
 /* * * * * * * *
  * Prototypes  *
  * * * * * * * */
-dir_t       getdir(dir_t);
-struct pos  drawplayer(dir_t, struct pos);
+int       getdir(int);
+struct pos  drawplayer(int, struct pos);
 void        printstatus(int);
-bool_t      drawenemies(struct pos, int);
-bool_t      treasures(struct pos);
-bool_t      fobjects(struct pos, int);
+int      drawenemies(struct pos, int);
+int      treasures(struct pos);
+int      fobjects(struct pos, int);
 void        parseargs(int argc, char *argv[]);
 void        setspeed();
 int         is_high_score(int score, int level, char *path);

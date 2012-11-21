@@ -174,7 +174,7 @@ int is_high_score(int score, int level, char *path) {
 	int i, lastscore = -1;
 
 	if (!path) {
-		path = expandpath(DEFAULT_SCOREFILE);
+		path = expandpath(DEFAULT_SCOREFILE, 0);
 	}
 	extpath = extend_str_space(path, 2);
 	extpath = append_dotnr_to_path(extpath, level);
