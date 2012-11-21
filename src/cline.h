@@ -21,9 +21,6 @@
 #define TRUE 1
 #define OPTIONS_COUNT 7 /* Number of posts in longopts[] */
 
-/* Prototypes */
-void printscores(char *path);
-
 /*
  * Some command line arguments outputs a lot of text. These strings are kept
  * here because they cludge the code. Below are:
