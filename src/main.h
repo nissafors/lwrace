@@ -55,3 +55,4 @@ void        setspeed();
 int         is_high_score(int score, int level, char *path);
 char        *getname();
 void        writescores(char* path, char *name, int score, int level);
+void        seedgenrand(void);

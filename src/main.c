@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
 	/* Parse and implement command line arguments */
 	parseargs(argc, argv);
 	setspeed();
+	/* Seed random number generator */
+	seedgenrand();
 
 	/* ncurses settings */
 	initscr();             /* Clear screen and enter curses mode */
@@ -103,7 +105,6 @@ int main(int argc, char *argv[])
 		GETGAMEAREA(rows, cols);
 		/* Update and print players position and score */
 		plpos = drawplayer(pldir, plpos);
-		score += treasures(plpos);
 		printstatus(score);
 		/* Update and draw enemies and falling objects. These return
 		 * HIT (= TRUE) if player ran into any of them. */
@@ -115,6 +116,7 @@ int main(int argc, char *argv[])
 			}
 			break;
 		}
+		score += treasures(plpos);
 	}
 
 	endwin();               /* Exit curses mode */

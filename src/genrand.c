@@ -18,18 +18,15 @@
 #include <stdlib.h>     /* For NULL */
 #include <sys/time.h>
 
-int genrand(int min, int max) {
-	static long lastseed;
+void seedgenrand() {
 	long seed;
 	struct timeval now;
 	gettimeofday(&now, NULL);
 	
 	seed = now.tv_sec * now.tv_usec;
-	if (seed == lastseed) {
-		seed++;
-	}
-	lastseed = seed;
-
 	srand(seed);
+}
+
+int genrand(int min, int max) {
 	return rand() % (max-min) + min;
 }
