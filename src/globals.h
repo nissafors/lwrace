@@ -58,7 +58,7 @@ typedef int bool_t;     /* Boolean   */
 /*** Prototypes ***/
 bool_t      setpos(dir_t, struct pos *, double *, double *, double *);
 struct pos  drawfigure (struct pos, char, struct pos, char, int, int);
-double      getnow();
+double      getnow(void);
 int         genrand(int, int);
 char        *expandpath(char *path, int isfile);
 void        printscores(char *path, int level);

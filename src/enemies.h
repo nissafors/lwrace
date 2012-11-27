@@ -27,4 +27,4 @@
 #define LOGIC_MAX_COLQ            0.375
 
 /* Prototypes */
-int hunt(struct pos *, struct pos *, int);
+dir_t hunt(struct pos *, struct pos *, int);
