@@ -1,0 +1,20 @@
+# A line is a comment if it begins with '#'
+#
+# Syntax is:
+#    action keydef
+# Where action is up, down, left, right, stop, pause or exit, and keydef is
+# either a typable character within surrounded by ''s, a raw number that
+# curses getch() can handle or any of <return>, <tab>, <esc>, <space>, <enter>,
+# <down>, <up>, <left>, <right>, <home>, <backspace>, <del>, <ins>, <pgdn>,
+# <pgup> or <end>. Note that you can't use ' '. Instead, use <space>.
+#
+# By default lwrace looks in "~/.lwrace/keys" for keydefs. You can also use
+# the -k switch to specify keyfile.
+    	
+down    'j'
+up      'k'
+left    'h'
+right   'l'
+stop    <space>
+pause   <tab>
+exit    27

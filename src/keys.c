@@ -139,13 +139,3 @@ int setkeys(char* path) {
 	/* Whole file read with no errors */
 	return 0;
 }
-
-int main() {
-	if(setkeys("keys")) {
-		/* error */
-		exit(0);
-	}
-	printf("up: %o down: %o left: %o right: %o stop: %o pause: %o esc: %o\n",
-	       key_up, key_down, key_left, key_right, key_stop, key_pause, key_esc);
-	return 0;
-}
