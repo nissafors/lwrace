@@ -15,7 +15,8 @@ OBJECTS := main.o       \
            cline.o      \
            settings.o   \
            path.o       \
-           score.o
+           score.o      \
+           keys.o
 # Cygwin hides curses.h, must specify include path:
 INC_PATH := -I/usr/include/ncurses/
 

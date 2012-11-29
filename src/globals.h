@@ -42,7 +42,7 @@
 #define BACKGROUND  ' '
 
 /* Files */
-#define DEFAULT_KEYSFILE "~/.lwrace/keys"
+#define DEFAULT_KEYFILE "~/.lwrace/keys"
 #define DEFAULT_SCOREFILE "~/.lwrace/highscores"
 
 /* Structs */

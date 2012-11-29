@@ -49,8 +49,8 @@ static void initglobals() {
 	key_down                = KEY_DOWN;
 	key_left                = KEY_LEFT;
 	key_right               = KEY_RIGHT;
-	key_file_path           = NULL;
-	hiscore_file_path       = NULL;
+	key_file_path           = expandpath(DEFAULT_KEYFILE, 1);
+	hiscore_file_path       = expandpath(DEFAULT_SCOREFILE, 1);
 }
 
 /*
@@ -80,6 +80,9 @@ int main(int argc, char *argv[])
 	/* Parse and implement command line arguments */
 	parseargs(argc, argv);
 	setspeed();
+	if (setkeys(key_file_path) == 2) {
+		return 1;          /* Quit on syntax error */
+	}
 	/* Seed random number generator */
 	seedgenrand();
 

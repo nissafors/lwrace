@@ -92,6 +92,8 @@ void parseargs(int argc, char *argv[])
 	extern int level;
 	extern char *key_file_path;
 	extern char *hiscore_file_path;
+	char *heap_area_for_scorefile_path;
+	char *heap_area_for_keyfile_path;
 	int c, i;
 	char argstring[OPTIONS_COUNT + 1];
 	argstring[0] = '\0';
@@ -133,13 +135,21 @@ void parseargs(int argc, char *argv[])
 				setlevel(optarg);
 				break;
 			case 'f':
-				hiscore_file_path = expandpath(optarg, TRUE);
+				if( (heap_area_for_scorefile_path = expandpath(optarg, TRUE)) )
+				{
+					free(hiscore_file_path);
+					hiscore_file_path = heap_area_for_scorefile_path;
+				}
 				break;
 			case 'h':
 				showhelp(optarg); /* Always be helpful... */
 				exit(0);
 			case 'k':
-				key_file_path = expandpath(optarg, TRUE);
+				if( (heap_area_for_keyfile_path = expandpath(optarg, TRUE)) )
+				{
+					free(key_file_path);
+					key_file_path = heap_area_for_keyfile_path;
+				}
 				break;
 		}
 		/* Save letter to end of string */
@@ -164,8 +174,6 @@ void parseargs(int argc, char *argv[])
 
 	/* Execute remaining commands */
 	if (strchr(argstring, 's')) {
-		if (!hiscore_file_path)
-			hiscore_file_path = expandpath(DEFAULT_SCOREFILE, TRUE);
 		if (!strchr(argstring, 'l')) {
 			/* no level argument: tell printscores() to print all levels by
 			 * sending negative level */

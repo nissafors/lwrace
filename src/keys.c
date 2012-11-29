@@ -1,3 +1,20 @@
+/* Part of Lawyer Race 
+   Functions for reading and parsing keyfile
+   Copyright (C) 2012 Andreas Andersson
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,21 +23,21 @@
 
 #define MAXLINE 128
 
-int    key_up, key_down, key_left, key_right;
-int    key_esc, key_pause, key_stop;
+extern int    key_up, key_down, key_left, key_right;
+extern int    key_esc, key_pause, key_stop;
 
 #define KEYWORDS_COUNT 7
 struct keyword_global_pair {
 	char *keyword;
 	int *global;
 } kw[] = {
-	"up", &key_up,
-	"down", &key_down,
-	"left", &key_left,
-	"right", &key_right,
-	"stop", &key_stop,
-	"pause", &key_pause,
-	"exit", &key_esc
+	{ "up"   , &key_up    },
+	{ "down" , &key_down  },
+	{ "left" , &key_left  },
+	{ "right", &key_right },
+	{ "stop" , &key_stop  },
+	{ "pause", &key_pause },
+	{ "exit" , &key_esc   }
 };
 
 #define KEYS_COUNT 16
@@ -28,22 +45,22 @@ struct key_s {
 	char *keyspec;
 	int keynum;
 } keys[] = {
-	"<return>", '\n',
-	"<tab>", 9,
-	"<esc>", 27,
-	"<space>", ' ',
-	"<enter>", KEY_ENTER,
-	"<down>", KEY_DOWN,
-	"<up>", KEY_UP,
-	"<left>", KEY_LEFT,
-	"<right>", KEY_RIGHT,
-	"<home>", KEY_HOME,
-	"<backspace>", KEY_BACKSPACE,
-	"<del>", KEY_DC,
-	"<ins>", KEY_IC,
-	"<pgdn>", KEY_NPAGE,
-	"<pgup>", KEY_PPAGE,
-	"<end>", KEY_END
+	{ "<return>"    , '\n'          },
+	{ "<tab>"       , 9             },
+	{ "<esc>"       , 27            },
+	{ "<space>"     , ' '           },
+	{ "<enter>"     , KEY_ENTER     },
+	{ "<down>"      , KEY_DOWN      },
+	{ "<up>"        , KEY_UP        },
+	{ "<left>"      , KEY_LEFT      },
+	{ "<right>"     , KEY_RIGHT     },
+	{ "<home>"      , KEY_HOME      },
+	{ "<backspace>" , KEY_BACKSPACE },
+	{ "<del>"       , KEY_DC        },
+	{ "<ins>"       , KEY_IC        },
+	{ "<pgdn>"      , KEY_NPAGE     },
+	{ "<pgup>"      , KEY_PPAGE     },
+	{ "<end>"       , KEY_END       }
 };
 
 /*
@@ -90,8 +107,11 @@ int parse_key(char *value, int *key) {
  * Read keyfile and look for lines starting with keywords "up, down, left,
  * right, stop, pause & exit". When found, send the rest of the string to
  * parse_key(). If invalid keyword found, or parse_key() returns true,
- * report syntax error to stderr and return 1 to caller. If no errors
- * found, return true.
+ * report syntax error to stderr and return to caller.
+ * Return values:
+ * 0: Success
+ * 1: Can't open file
+ * 2: Syntax error
  */
 int setkeys(char* path) {
 	FILE *file;
@@ -133,7 +153,7 @@ int setkeys(char* path) {
 		}
 		if (error_flag) {
 			error(0, 0, "Keyfile syntax error -- %s", path);
-			return 1;
+			return 2;
 		}
 	}
 	/* Whole file read with no errors */

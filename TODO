@@ -1,4 +1,5 @@
-* Write functions to display and store high scores
+* Write functions to store high scores
 * Keyfile support
-* Write intro?
-* Fix ugly game over routine in main()
+* Support for multiple players
+* Pause function
+* expandpath() should handle ../ at all and to any depth

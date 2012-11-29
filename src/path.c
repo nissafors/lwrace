@@ -44,8 +44,10 @@ static char *getudir() {
 				return NULL;
 			}
 		}
+		endpwent();
 		return upwent->pw_dir;  /* SUCCESS! */ 
 	}
+	endpwent();
 	return NULL; /* First call to getpwent failed */
 }
 
