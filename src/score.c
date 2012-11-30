@@ -7,7 +7,7 @@
 #include "globals.h"
 
 #define NAME_MAX 30
-#define MAX_SCORES_PER_FILE 15
+#define MAX_SCORES_PER_FILE 10
 
 struct hiscore {
 	char *name;
@@ -118,7 +118,7 @@ char *getname() {
  */
 #define MAX_NUM 20 /* If someone gets a really good score on a 64 bit chip :) */
 static struct hiscore *readscores (char *path) {
-	static struct hiscore scores[MAX_SCORES_PER_FILE];
+	static struct hiscore scores[MAX_SCORES_PER_FILE + 1];
 	char *heap;
 	char numtemp[MAX_NUM]; 
 	FILE *file;
@@ -154,6 +154,7 @@ static struct hiscore *readscores (char *path) {
 		if (sscanf(numtemp, "%d", &(scores[i].score)) != 1)
 			error(1, 0, "expected number on line %d in high score file", i);
 	}
+	scores[i].name = NULL;
 	fclose(file);
 	return scores;
 }
@@ -184,9 +185,11 @@ int is_high_score(int score, int level, char *path) {
 		return 1; /* no such file or directory, so this is a high score */
 	}
 	
-	for (i = 0; i <= MAX_SCORES_PER_FILE; i++) {
-		if (!(scores+i)->name)
-			break;
+	for (i = 0; i < MAX_SCORES_PER_FILE; i++) {
+		if (!(scores+i)->name) {
+			/* There's room for more scores in this file */
+			return 1;
+		}
 		lastscore = (scores+i)->score;
 	}
 	if (score > lastscore)
@@ -205,6 +208,7 @@ void writescores(char* path, char *name, int score, int level) {
 	char *extpath;
 	char *fstr = "%s\n%d\n";
 	int i, writes;
+	FILE *file;
 	
 	/* Append path, default if none given, with .<level> */
 	if (!path) {
@@ -216,26 +220,31 @@ void writescores(char* path, char *name, int score, int level) {
 	/* Read scores if file exists */
 	scores = readscores(extpath);
 
+	/*** ADD ERROR CHECKING!!! ***/
+	/* Create or replace file */
+	file = fopen(extpath, "w");
+
 	/* Print out scores to file, inserting new score at it's place */
 	if (!scores) {
-		printf(fstr, name, score);
+		fprintf(file, fstr, name, score);
 	} else {
-		for (writes = 0, i = 0; writes <= MAX_SCORES_PER_FILE; writes++, i++) {
+		for (writes = 0, i = 0; writes < MAX_SCORES_PER_FILE; writes++, i++) {
 			if (!(scores + i)->name) {
-				if (level >= 0) {
-					printf(fstr, name, score);
+				if (level >= 0 && score >= 0) {
+					fprintf(file, fstr, name, score);
 				}
 				break;
 			}
 			if (score > (scores + i)->score) {
-				printf(fstr, name, score);
+				fprintf(file, fstr, name, score);
 				score = -1; /* Don't print it again */
 				i--;
 			} else {
-				printf(fstr, (scores + i)->name, (scores + i)->score);
+				fprintf(file, fstr, (scores + i)->name, (scores + i)->score);
 			}
 		}
 	}
+	fclose(file);
 }
 
 /*
@@ -265,6 +274,7 @@ void printscores(char *path, int level) {
 	char *extpath = NULL;
 	int printed_count = 0;
 	char *heading = "  High Scores - level %d\n";
+	char *fstr    = "%3d: %5d :: %s\n";
 	char fromlevel, tolevel;
 	int i;
 	
@@ -286,12 +296,12 @@ void printscores(char *path, int level) {
 			printf(heading, fromlevel);
 			dashes(strlen(heading) + 2);
 		}
+		if (!scores)
+			continue;
 		/* Print array */
 		for (i = 0; i < MAX_SCORES_PER_FILE; i++) {
-			if (!scores)
-				continue;
 			if ((scores + i)->name) {
-				printf("Score: %5d, by %s\n", (scores + i)->score,
+				printf(fstr, i + 1, (scores + i)->score,
 						(scores + i)->name);
 				printed_count++;
 			}

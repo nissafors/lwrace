@@ -1,5 +1,4 @@
-* Write functions to store high scores
-* Keyfile support
+* Error checking when writing high scores
+* Create directory ~/.lwrace when writing high scores if it doesn't exist
 * Support for multiple players
-* Pause function
 * expandpath() should handle ../ at all and to any depth

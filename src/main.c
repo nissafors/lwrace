@@ -149,9 +149,13 @@ int main(int argc, char *argv[])
 		 * HIT (= TRUE) if player ran into any of them. */
 		if(drawenemies(plpos, score) || fobjects(plpos, score)) {
 			mvaddch(plpos.row, plpos.col, DEAD);  /* Player killed */
+			refresh();
 			idle("GAME OVER!");
 			if (is_high_score(score, level, hiscore_file_path)) {
 				/*** Store and print scores ***/
+				name = getname();
+				endwin();
+				writescores(hiscore_file_path, name, score, level);
 			}
 			break;
 		}
