@@ -16,6 +16,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include <curses.h>     /* Must be included before main.h */
+#include <string.h>
 #include "globals.h"    /* Must be included before main.h */
 #include "main.h"
 
@@ -54,15 +55,42 @@ static void initglobals() {
 }
 
 /*
- * Show informative message to player and wait for keypress
+ * Display a window with message + "Press enter" while waiting for keypress.
+ * Before leaving delete the window and redraw stdscr.
  */
-void game_over() {
-	mvprintw(rows/3,cols/2-6,"GAME OVER!");
-	mvprintw(rows-rows/3,cols/2-6,"Press enter");
-	refresh();
-	nodelay(stdscr, FALSE);
-	while(getch() != key_enter)
+void idle(char *message) {
+	int height, width, nwrow, nwcol;
+	int message_len, presskey_msg_len;
+	char *presskey_msg = "Press enter...";
+	WINDOW *win;
+	
+	/* Set window size */
+	message_len      = strlen(message);
+	presskey_msg_len = strlen(presskey_msg);
+	if (message_len >= presskey_msg_len) {
+		width = message_len + 6;
+	} else {
+		width = presskey_msg_len + 6;
+	}
+	height = 7;
+	nwrow = rows / 2.0 - height / 2.0;
+	nwcol = cols / 2.0 - width / 2.0;
+	
+	/* Create and display window and messages */
+	win = newwin(height,  width,  nwrow,  nwcol);
+	box(win,  0, 0);
+	mvwprintw(win, 2, width / 2.0 - strlen(message) / 2.0, message);
+	mvwprintw(win, 4, width / 2.0 - strlen(presskey_msg) / 2.0, presskey_msg);
+	wrefresh(win);
+	
+	/* Wait for keystroke */
+	while(wgetch(win) != key_enter)
 		;
+
+	/* Kill windows, redraw stdscr and return to caller */
+	delwin(win);
+	redrawwin(stdscr);
+	return;
 }
 
 /*
@@ -72,6 +100,7 @@ int main(int argc, char *argv[])
 {
 	struct pos plpos;      /* Players position on screen */
 	dir_t pldir;           /* Players direction */
+	dir_t lastdir;         /* Backup direction while pausing */
 	int score;             /* Players score */
 	char *name;            /* Players name */
 	
@@ -104,22 +133,28 @@ int main(int argc, char *argv[])
 
 	/* Game loop */
 	while ((pldir = getdir(pldir)) != EXIT) {
+		/* Pause if user demands it */
+		if (pldir == PAUSE) {
+			idle("Game paused");
+			pldir = lastdir;
+		}
+		lastdir = pldir;
 		/* Get new screensize  */
 		GETGAMEAREA(rows, cols);
 		/* Update and print players position and score */
 		plpos = drawplayer(pldir, plpos);
+		score += treasures(plpos);
 		printstatus(score);
 		/* Update and draw enemies and falling objects. These return
 		 * HIT (= TRUE) if player ran into any of them. */
 		if(drawenemies(plpos, score) || fobjects(plpos, score)) {
 			mvaddch(plpos.row, plpos.col, DEAD);  /* Player killed */
-			game_over();
+			idle("GAME OVER!");
 			if (is_high_score(score, level, hiscore_file_path)) {
 				/*** Store and print scores ***/
 			}
 			break;
 		}
-		score += treasures(plpos);
 	}
 
 	endwin();               /* Exit curses mode */
