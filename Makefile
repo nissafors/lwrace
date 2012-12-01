@@ -8,8 +8,7 @@ OBJECTS := main.o       \
            player.o     \
            enemies.o    \
            treasures.o  \
-           getnow.o     \
-           genrand.o    \
+           miscfunc.o    \
            drawfigure.o \
            fobjects.o   \
            cline.o      \

@@ -41,7 +41,8 @@
 #define OBJECT      'o'
 #define BACKGROUND  ' '
 
-/* Files */
+/* Files and directories */
+#define DEFAULT_DIRECTORY "~/.lwrace"
 #define DEFAULT_KEYFILE "~/.lwrace/keys"
 #define DEFAULT_SCOREFILE "~/.lwrace/highscores"
 

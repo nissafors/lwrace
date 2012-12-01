@@ -17,6 +17,7 @@
 
 #include <curses.h>     /* Must be included before main.h */
 #include <string.h>
+#include <stdlib.h>
 #include "globals.h"    /* Must be included before main.h */
 #include "main.h"
 
@@ -152,10 +153,12 @@ int main(int argc, char *argv[])
 			refresh();
 			idle("GAME OVER!");
 			if (is_high_score(score, level, hiscore_file_path)) {
-				/*** Store and print scores ***/
 				name = getname();
-				endwin();
+				endwin();   /* Leave curses mode */
+				/* Write score to hiscore file and display that file */
 				writescores(hiscore_file_path, name, score, level);
+				printscores(hiscore_file_path, level);
+				exit(0);
 			}
 			break;
 		}
