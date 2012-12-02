@@ -86,12 +86,15 @@ int incompatibleopts(char *argstring) {
  * #include <unistd.h>
  * #include <string.h>
  * Parse command line arguments. Depends on a few #defines i cline.h
+ * Return a bitmask where LEVEL_ALTERED = 1, SCOREFILE_ALTERED = 2 and
+ * KEYFILE_ALTERED = 4. These constants are defined in globals.h.
  */
-void parseargs(int argc, char *argv[])
+int parseargs(int argc, char *argv[])
 {
 	extern int level;
 	extern char *key_file_path;
 	extern char *hiscore_file_path;
+	int return_bits = 0;
 	char *heap_area_for_scorefile_path;
 	char *heap_area_for_keyfile_path;
 	int c, i;
@@ -133,12 +136,14 @@ void parseargs(int argc, char *argv[])
 		switch (c) {
 			case 'l':
 				setlevel(optarg);
+				return_bits = return_bits | LEVEL_ALTERED;
 				break;
 			case 'f':
 				if( (heap_area_for_scorefile_path = expandpath(optarg, TRUE)) )
 				{
 					free(hiscore_file_path);
 					hiscore_file_path = heap_area_for_scorefile_path;
+					return_bits = return_bits | SCOREFILE_ALTERED;
 				}
 				break;
 			case 'h':
@@ -149,6 +154,7 @@ void parseargs(int argc, char *argv[])
 				{
 					free(key_file_path);
 					key_file_path = heap_area_for_keyfile_path;
+					return_bits = return_bits | KEYFILE_ALTERED;
 				}
 				break;
 		}
@@ -187,7 +193,8 @@ void parseargs(int argc, char *argv[])
 		exit(0);
 	}
 	if (*argstring == 'v') {
-		puts(version);
+		printf(version, LWRACE_VERSION);
 		exit(0);
 	}
+	return return_bits;
 }

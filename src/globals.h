@@ -14,6 +14,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
+/* Version information */
+#define LWRACE_VERSION "0.2"
+
 /* Game control */
 #define STOP                       0
 #define UP                         1
@@ -40,6 +43,11 @@
 #define TREASURE    '$'
 #define OBJECT      'o'
 #define BACKGROUND  ' '
+
+/* Return bit mask for parseargs() in cline.c */
+#define LEVEL_ALTERED      1
+#define SCOREFILE_ALTERED  2
+#define KEYFILE_ALTERED    4
 
 /* Files and directories */
 #define DEFAULT_DIRECTORY "~/.lwrace"

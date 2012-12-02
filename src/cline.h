@@ -32,7 +32,7 @@
  * The program use puts() to display them and they shall therefore NOT end
  * with \n!
  */
-static char *version = "Lawyer race version 0.1";
+static char *version = "Lawyer race version %s\n";
 
 static char *usage = 
 "Usage: lwrace [-l <0-9>] [-f <file>] [-k <file>]\n"

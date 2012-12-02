@@ -1,4 +1,3 @@
-* Error checking when writing high scores
-* Create directory ~/.lwrace when writing high scores if it doesn't exist
+* Error checking in writescores()
 * Support for multiple players
 * expandpath() should handle ../ at all and to any depth

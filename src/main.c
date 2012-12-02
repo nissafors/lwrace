@@ -104,14 +104,25 @@ int main(int argc, char *argv[])
 	dir_t lastdir;         /* Backup direction while pausing */
 	int score;             /* Players score */
 	char *name;            /* Players name */
+	char *default_dir;     /* Dir to store high scores and keyfile */
+	int parseargs_bitmask; /* Return value from parseargs() */
+	bool_t scores_off;     /* If true, don't read or write high scores */
 	
 	/* Set some globals */
 	initglobals();
 	/* Parse and implement command line arguments */
-	parseargs(argc, argv);
+	parseargs_bitmask = parseargs(argc, argv);
 	setspeed();
 	if (setkeys(key_file_path) == 2) {
 		return 1;          /* Quit on syntax error */
+	}
+	/* If default directory does not exist: create it */
+	default_dir = expandpath(DEFAULT_DIRECTORY, 0);
+	scores_off = mk_default_dir(default_dir);
+	free(default_dir);
+	if (scores_off && (parseargs_bitmask & SCOREFILE_ALTERED)) {
+		/* A scorefile is supplied by user, try it! */
+		scores_off = 0;
 	}
 	/* Seed random number generator */
 	seedgenrand();
@@ -152,13 +163,15 @@ int main(int argc, char *argv[])
 			mvaddch(plpos.row, plpos.col, DEAD);  /* Player killed */
 			refresh();
 			idle("GAME OVER!");
-			if (is_high_score(score, level, hiscore_file_path)) {
-				name = getname();
-				endwin();   /* Leave curses mode */
-				/* Write score to hiscore file and display that file */
-				writescores(hiscore_file_path, name, score, level);
-				printscores(hiscore_file_path, level);
-				exit(0);
+			if (!scores_off) {
+				if (is_high_score(score, level, hiscore_file_path)) {
+					name = getname();
+					endwin();   /* Leave curses mode */
+					/* Write score to hiscore file and display that file */
+					writescores(hiscore_file_path, name, score, level);
+					printscores(hiscore_file_path, level);
+					exit(0);
+				}
 			}
 			break;
 		}
