@@ -42,7 +42,11 @@ enemies.o: enemies.h
 fobjects.o: fobjects.h
 cline.o: cline.h
 
-# CLeaning
+# Install lwrace into /usr/local/bin
+install:
+	cp lwrace /usr/local/bin/lwrace
+	
+# Cleaning
 clean:
 	rm -f $(PROGRAM)
 	rm -f *.o
