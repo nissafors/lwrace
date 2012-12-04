@@ -197,11 +197,10 @@ int is_high_score(int score, int level, char *path) {
 
 /*
  * Write high score to file. <path> will be appended with .<level> by function.
- * If <path>.<level> can't be found, create it. If it failes, warn and ask user
- * for permission to write to DEFAULT_SCOREFILE.<level> instead. If he won't let
- * us, exit. If we fail, exit with an error.
+ * If <path>.<level> can't be found, create it (the file, that is, not
+ * directories). If it failes, return 1. On success, return 0.
  */
-void writescores(char* path, char *name, int score, int level) {
+int writescores(char* path, char *name, int score, int level) {
 	struct hiscore *scores;
 	char *extpath;
 	char *fstr = "%s\n%d\n";
@@ -221,6 +220,9 @@ void writescores(char* path, char *name, int score, int level) {
 	/*** ADD ERROR CHECKING!!! ***/
 	/* Create or replace file */
 	file = fopen(extpath, "w");
+	if (!file) {
+		return 1;
+	}
 
 	/* Print out scores to file, inserting new score at it's place */
 	if (!scores) {
@@ -243,6 +245,7 @@ void writescores(char* path, char *name, int score, int level) {
 		}
 	}
 	fclose(file);
+	return 0;
 }
 
 /*

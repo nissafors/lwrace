@@ -15,7 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Version information */
-#define LWRACE_VERSION "0.2"
+#define LWRACE_VERSION "0.3"
 
 /* Game control */
 #define STOP                       0

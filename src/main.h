@@ -54,7 +54,7 @@ int         parseargs(int argc, char *argv[]);
 void        setspeed(void);
 int         is_high_score(int score, int level, char *path);
 char        *getname(void);
-void        writescores(char* path, char *name, int score, int level);
+int         writescores(char* path, char *name, int score, int level);
 void        seedgenrand(void);
 int         setkeys(char* path);
 int         mk_default_dir(char *path);

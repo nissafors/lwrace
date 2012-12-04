@@ -7,15 +7,20 @@ building it.
 
 To build Lawyer Race, just type:
 
-make
+$ make
 
-in a terminal. To start the game, type:
+...in a terminal. ($ is a shell prompt and should not be typed.)
+To install it system wide (to /usr/local/bin), execute:
 
-./lwrace
+$ make install
+
+To start the game, just type:
+
+$ lwrace
 
 For help, try:
 
-./lwrace --help
+$ lwrace --help
 
 The game is provided as-is with absolutely no warranty whatsoever.
 It is released under the terms of the GNU General Public License (see COPYING

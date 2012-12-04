@@ -1,3 +1,2 @@
-* Error checking in writescores()
 * Support for multiple players
 * expandpath() should handle ../ at all and to any depth

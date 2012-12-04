@@ -18,6 +18,7 @@
 #include <curses.h>     /* Must be included before main.h */
 #include <string.h>
 #include <stdlib.h>
+#include <error.h>
 #include "globals.h"    /* Must be included before main.h */
 #include "main.h"
 
@@ -168,7 +169,10 @@ int main(int argc, char *argv[])
 					name = getname();
 					endwin();   /* Leave curses mode */
 					/* Write score to hiscore file and display that file */
-					writescores(hiscore_file_path, name, score, level);
+					scores_off = writescores(hiscore_file_path, name, score, level);
+					if (scores_off) {
+						error(1, 0, "Can't open high score file -- %s", hiscore_file_path);
+					}
 					printscores(hiscore_file_path, level);
 					exit(0);
 				}
