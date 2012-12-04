@@ -36,7 +36,7 @@ drawfigure.o  \
 fobjects.o    \
 cline.o       \
 settings.o    \
-score.o: globals.h
+score.o: global.h
 main.o: main.h
 enemies.o: enemies.h
 fobjects.o: fobjects.h

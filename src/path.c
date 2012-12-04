@@ -32,23 +32,23 @@
  * Return NULL if uid not found or other getpwent() error occured.
  */
 static char *getudir() {
-	struct passwd *upwent;
-	uid_t uid;
+    struct passwd *upwent;
+    uid_t uid;
 
-	uid = getuid();
-	if ( (upwent = getpwent()) ) {
-		/* Search for current uid in passwd file and return corresponding dir */
-		while (upwent->pw_uid != uid) {
-			if ( !(upwent = getpwent()) ) {
-				/* Reached end of passwd file finding no matching uid */
-				return NULL;
-			}
-		}
-		endpwent();
-		return upwent->pw_dir;  /* SUCCESS! */ 
-	}
-	endpwent();
-	return NULL; /* First call to getpwent failed */
+    uid = getuid();
+    if ( (upwent = getpwent()) ) {
+        /* Search for current uid in passwd file and return corresponding dir */
+        while (upwent->pw_uid != uid) {
+            if ( !(upwent = getpwent()) ) {
+                /* Reached end of passwd file finding no matching uid */
+                return NULL;
+            }
+        }
+        endpwent();
+        return upwent->pw_dir;  /* SUCCESS! */ 
+    }
+    endpwent();
+    return NULL; /* First call to getpwent failed */
 }
 
 /*
@@ -74,60 +74,60 @@ static char *getudir() {
 #define PATH_MAX 4096
 #endif
 char *expandpath(char *path, int isfile) {
-	char firstchar, secondchar, lastchar;
-	char cwd[PATH_MAX];
-	char *dir = NULL;
-	char *heap = NULL;
-	int len = 0;
+    char firstchar, secondchar, lastchar;
+    char cwd[PATH_MAX];
+    char *dir = NULL;
+    char *heap = NULL;
+    int len = 0;
 
-	firstchar = *path;
-	secondchar = *(path + 1);
-	lastchar = *(path + strlen(path) - 1);
-	/* Freak out if isfile was TRUE and lastchar is / */
-	if (lastchar == '/' && isfile)
-		return NULL;
-	/* Is path just a simple file name? */
-	if (firstchar != '~' && firstchar != '/') {
-		if ( !(firstchar == '.' && secondchar == '/') ) {
-			if (!strchr(path, '/')) {
-				/* Yes. Add to end of cwd and return pointer */
-				if (getcwd(cwd, PATH_MAX)) {
-					len = strlen(cwd) + strlen(path) + 2;
-					if ( (heap = malloc(len * sizeof(char))) ) {
-						sprintf(heap, "%s/%s", cwd, path);
-						return heap;
-					}
-				}
-			}
+    firstchar = *path;
+    secondchar = *(path + 1);
+    lastchar = *(path + strlen(path) - 1);
+    /* Freak out if isfile was TRUE and lastchar is / */
+    if (lastchar == '/' && isfile)
+        return NULL;
+    /* Is path just a simple file name? */
+    if (firstchar != '~' && firstchar != '/') {
+        if ( !(firstchar == '.' && secondchar == '/') ) {
+            if (!strchr(path, '/')) {
+                /* Yes. Add to end of cwd and return pointer */
+                if (getcwd(cwd, PATH_MAX)) {
+                    len = strlen(cwd) + strlen(path) + 2;
+                    if ( (heap = malloc(len * sizeof(char))) ) {
+                        sprintf(heap, "%s/%s", cwd, path);
+                        return heap;
+                    }
+                }
+            }
 
-		}
-	}
-	/* Does path begin with '~/' or './'? */ 
-	if ( (firstchar == '~' || firstchar == '.') && secondchar == '/') {
-		/* Yes! Expand to absolute path on the heap and return pointer */
-		if (firstchar == '~') {
-			dir = getudir();
-		} else {
-			dir = getcwd(cwd, PATH_MAX);
-		}
-		if (dir) {
-			if (strlen(dir) > PATH_MAX)
-				return NULL; /* Path too long */
-			/* Write dir + path to heap and return pointer. */
-			len = strlen(dir) + strlen(path);  /* len + '\0' - '~' */
-			if ( (heap = malloc(len * sizeof(char))) ) {
-				sprintf(heap, "%s%s", dir, path + 1);
-				return heap;
-			}
-		}
-	} else if (firstchar == '/') {
-		/* It's an absolute path: Just copy path to heap */
-		heap = malloc((strlen(path) + 1) * sizeof(char));
-		if (heap)
-			if (strlen(path) <= PATH_MAX) /* Make sure path isn't too long */
-				return strcpy(heap, path);
-	}
-	/* If we're here it was a bad formatted path, path is too long or
-	 * getudir(), getcwd() or malloc() failed. */
-	return NULL;
+        }
+    }
+    /* Does path begin with '~/' or './'? */ 
+    if ( (firstchar == '~' || firstchar == '.') && secondchar == '/') {
+        /* Yes! Expand to absolute path on the heap and return pointer */
+        if (firstchar == '~') {
+            dir = getudir();
+        } else {
+            dir = getcwd(cwd, PATH_MAX);
+        }
+        if (dir) {
+            if (strlen(dir) > PATH_MAX)
+                return NULL; /* Path too long */
+            /* Write dir + path to heap and return pointer. */
+            len = strlen(dir) + strlen(path);  /* len + '\0' - '~' */
+            if ( (heap = malloc(len * sizeof(char))) ) {
+                sprintf(heap, "%s%s", dir, path + 1);
+                return heap;
+            }
+        }
+    } else if (firstchar == '/') {
+        /* It's an absolute path: Just copy path to heap */
+        heap = malloc((strlen(path) + 1) * sizeof(char));
+        if (heap)
+            if (strlen(path) <= PATH_MAX) /* Make sure path isn't too long */
+                return strcpy(heap, path);
+    }
+    /* If we're here it was a bad formatted path, path is too long or
+     * getudir(), getcwd() or malloc() failed. */
+    return NULL;
 }

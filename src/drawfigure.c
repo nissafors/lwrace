@@ -17,7 +17,7 @@
 
 #include <curses.h>
 #include <math.h>
-#include "globals.h"
+#include "global.h"
 
 /*
  * Draw figure drawc at drawpos and erase (using erasec) at erasepos.
@@ -27,20 +27,20 @@
 struct pos drawfigure (struct pos drawpos, char drawc,
                        struct pos erasepos, char erasec,
                        int oldrows, int oldcols) {
-	extern int rows, cols;
+    extern int rows, cols;
 
-	/* If screen size has changed and figure is outside, move inside */
-	if (rows != oldrows && oldrows != 0)
-		drawpos.row *= (float)rows / (float)oldrows;
-	if (cols != oldcols && oldcols != 0)
-		drawpos.col *= (float)cols / (float)oldcols;
+    /* If screen size has changed and figure is outside, move inside */
+    if (rows != oldrows && oldrows != 0)
+        drawpos.row *= (float)rows / (float)oldrows;
+    if (cols != oldcols && oldcols != 0)
+        drawpos.col *= (float)cols / (float)oldcols;
 
-	/* Erase old and draw new enemy. */
-	mvaddch(erasepos.row, erasepos.col, erasec); /* Erase    */
-	mvaddch(drawpos.row, drawpos.col, drawc);    /* Draw     */
+    /* Erase old and draw new enemy. */
+    mvaddch(erasepos.row, erasepos.col, erasec); /* Erase    */
+    mvaddch(drawpos.row, drawpos.col, drawc);    /* Draw     */
 
-	/* Return new position */
-	return drawpos;
+    /* Return new position */
+    return drawpos;
 }
 
 /* 
@@ -49,69 +49,69 @@ struct pos drawfigure (struct pos drawpos, char drawc,
  * and resets *trec. Returns FALSE otherwise.
  */
 bool_t setpos(dir_t dir, struct pos *rc, double *rd, double *cd, double *trec) {
-	extern int rows, cols;
-	double dd = sqrt(pow(*rd, 2) + pow(*cd, 2));
+    extern int rows, cols;
+    double dd = sqrt(pow(*rd, 2) + pow(*cd, 2));
 
-	switch (dir) {
-		case UP:
-			if (getnow() - *trec < *rd)
-				return FALSE;
-			rc->row--;
-			break;
-		case DOWN:
-			if (getnow() - *trec < *rd)
-				return FALSE;
-			rc->row++;
-			break;
-		case RIGHT:
-			if (getnow() - *trec < *cd)
-				return FALSE;
-			rc->col++;
-			break;
-		case LEFT:
-			if (getnow() - *trec < *cd)
-				return FALSE;
-			rc->col--;
-			break;
-		case NE:
-			if (getnow() - *trec < dd)
-				return FALSE;
-			rc->row--;
-			rc->col++;
-			break;
-		case NW:
-			if (getnow() - *trec < dd)
-				return FALSE;
-			rc->row--;
-			rc->col--;
-			break;
-		case SE:
-			if (getnow() - *trec < dd)
-				return FALSE;
-			rc->row++;
-			rc->col++;
-			break;
-		case SW:
-			if (getnow() - *trec < dd)
-				return FALSE;
-			rc->row++;
-			rc->col--;
-			break;
-		default:
-			return FALSE;   /* Position not changed */
-	}
+    switch (dir) {
+        case UP:
+            if (getnow() - *trec < *rd)
+                return FALSE;
+            rc->row--;
+            break;
+        case DOWN:
+            if (getnow() - *trec < *rd)
+                return FALSE;
+            rc->row++;
+            break;
+        case RIGHT:
+            if (getnow() - *trec < *cd)
+                return FALSE;
+            rc->col++;
+            break;
+        case LEFT:
+            if (getnow() - *trec < *cd)
+                return FALSE;
+            rc->col--;
+            break;
+        case NE:
+            if (getnow() - *trec < dd)
+                return FALSE;
+            rc->row--;
+            rc->col++;
+            break;
+        case NW:
+            if (getnow() - *trec < dd)
+                return FALSE;
+            rc->row--;
+            rc->col--;
+            break;
+        case SE:
+            if (getnow() - *trec < dd)
+                return FALSE;
+            rc->row++;
+            rc->col++;
+            break;
+        case SW:
+            if (getnow() - *trec < dd)
+                return FALSE;
+            rc->row++;
+            rc->col--;
+            break;
+        default:
+            return FALSE;   /* Position not changed */
+    }
 
-	/* Check if new position is outside screen */
-	if (rc->row < 0)
-		rc->row = 0;
-	if (rc->row >= rows - 1)
-		rc->row = rows - 1;
-	if (rc->col < 0)
-		rc->col = 0;
-	if (rc->col >= cols - 1)
-		rc->col = cols - 1;
+    /* Check if new position is outside screen */
+    if (rc->row < 0)
+        rc->row = 0;
+    if (rc->row >= rows - 1)
+        rc->row = rows - 1;
+    if (rc->col < 0)
+        rc->col = 0;
+    if (rc->col >= cols - 1)
+        rc->col = cols - 1;
 
-	/* Reset timer and return to caller */
-	*trec = getnow();
-	return TRUE;
+    /* Reset timer and return to caller */
+    *trec = getnow();
+    return TRUE;
 }

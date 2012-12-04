@@ -14,7 +14,7 @@ To install it system wide (to /usr/local/bin), execute:
 
 $ make install
 
-To start the game, just type:
+...as root. To start the game, just type:
 
 $ lwrace
 

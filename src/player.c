@@ -17,7 +17,7 @@
 
 #include <curses.h>
 #include <string.h>
-#include "globals.h"
+#include "global.h"
 
 /*
  * Read keybuffer and return direction, pause or exit. "curdir" is current
@@ -25,26 +25,26 @@
  * pressed
  */
 dir_t getdir(dir_t curdir) {
-	extern int key_up, key_down, key_left, key_right;
-	extern int key_stop, key_pause, key_esc;
+    extern int key_up, key_down, key_left, key_right;
+    extern int key_stop, key_pause, key_esc;
 
-	int key = getch();
+    int key = getch();
 
-	if (key == key_up)
-		return UP;
-	if (key == key_down)
-		return DOWN;
-	if (key == key_left)
-		return LEFT;
-	if (key == key_right)
-		return RIGHT;
-	if (key == key_stop)
-		return STOP;
-	if (key == key_pause)
-		return PAUSE;
-	if (key == key_esc)
-		return EXIT;
-	return curdir;  /* No valid keys pressed, return current direction */
+    if (key == key_up)
+        return UP;
+    if (key == key_down)
+        return DOWN;
+    if (key == key_left)
+        return LEFT;
+    if (key == key_right)
+        return RIGHT;
+    if (key == key_stop)
+        return STOP;
+    if (key == key_pause)
+        return PAUSE;
+    if (key == key_esc)
+        return EXIT;
+    return curdir;  /* No valid keys pressed, return current direction */
 }
 
 /*
@@ -52,24 +52,24 @@ dir_t getdir(dir_t curdir) {
  * players new position. Delay control is in header.
  */
 struct pos drawplayer(dir_t dir, struct pos curpos) {
-	extern int    rows, cols;
-	extern double player_row_delay;
-	extern double player_col_delay;
-	static double lasttime;           /* Used by setpos() for delay timer */
-	static int    lastrows, lastcols; /* used by drawfigure() */
-	struct pos    oldpos;
-	double        rdelay = player_row_delay / rows;
-	double        cdelay = player_col_delay / cols;
+    extern int    rows, cols;
+    extern double player_row_delay;
+    extern double player_col_delay;
+    static double lasttime;           /* Used by setpos() for delay timer */
+    static int    lastrows, lastcols; /* used by drawfigure() */
+    struct pos    oldpos;
+    double        rdelay = player_row_delay / rows;
+    double        cdelay = player_col_delay / cols;
 
-	/* Set new position and draw player */
-	oldpos = curpos;
-	if (setpos(dir, &curpos, &rdelay, &cdelay, &lasttime) || dir == INIT) {
-		curpos = drawfigure(curpos, PLAYER, oldpos, BACKGROUND,
-		                    lastrows, lastcols);
-		lastrows = rows, lastcols = cols; /* Remember screen size */
-	}
-	/* Go home */
-	return curpos;
+    /* Set new position and draw player */
+    oldpos = curpos;
+    if (setpos(dir, &curpos, &rdelay, &cdelay, &lasttime) || dir == INIT) {
+        curpos = drawfigure(curpos, PLAYER, oldpos, BACKGROUND,
+                            lastrows, lastcols);
+        lastrows = rows, lastcols = cols; /* Remember screen size */
+    }
+    /* Go home */
+    return curpos;
 }
 
 /*
@@ -79,21 +79,21 @@ struct pos drawplayer(dir_t dir, struct pos curpos) {
  * screen size changed
  */
 void printstatus (int score) {
-	extern int rows;
-	extern int cols;
-	extern int level;
-	static int oldscrrow;
-	int        clrcol;
-	char      *scoref = "Score: %d";
-	char      *levelf = "Level: %d";
-	
-	/* Erase old status row if screensize changed */
-	if (oldscrrow != rows)
-		for (clrcol = 0; clrcol < cols; clrcol++)
-			mvaddch(oldscrrow, clrcol, BACKGROUND);
-	/* Print score and level */
-	mvprintw(rows, 0, scoref, score);
-	mvprintw(rows, cols - strlen(levelf), levelf, level);
-	/* Save current status row position */
-	oldscrrow = rows;
+    extern int rows;
+    extern int cols;
+    extern int level;
+    static int oldscrrow;
+    int        clrcol;
+    char      *scoref = "Score: %d";
+    char      *levelf = "Level: %d";
+    
+    /* Erase old status row if screensize changed */
+    if (oldscrrow != rows)
+        for (clrcol = 0; clrcol < cols; clrcol++)
+            mvaddch(oldscrrow, clrcol, BACKGROUND);
+    /* Print score and level */
+    mvprintw(rows, 0, scoref, score);
+    mvprintw(rows, cols - strlen(levelf), levelf, level);
+    /* Save current status row position */
+    oldscrrow = rows;
 }

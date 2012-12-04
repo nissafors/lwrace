@@ -29,29 +29,29 @@
  * Do seedgenrand() before using.
  */
 int genrand(int min, int max) {
-	return rand() % (max-min) + min;
+    return rand() % (max-min) + min;
 }
 
 /*
  * Supply seed for genrand()
  */
 void seedgenrand() {
-	long seed;
-	struct timeval now;
-	gettimeofday(&now, NULL);
-	
-	seed = now.tv_sec * now.tv_usec;
-	srand(seed);
+    long seed;
+    struct timeval now;
+    gettimeofday(&now, NULL);
+    
+    seed = now.tv_sec * now.tv_usec;
+    srand(seed);
 }
 
 /*
  * Return current time of day as secs.millisecs
  */
 double getnow() {
-	struct timeval now;
+    struct timeval now;
 
-	gettimeofday(&now, NULL);
-	return now.tv_sec+(now.tv_usec/1000000.0);
+    gettimeofday(&now, NULL);
+    return now.tv_sec+(now.tv_usec/1000000.0);
 }
 
 /*
@@ -63,44 +63,44 @@ double getnow() {
  * 1: mkdir() failed or path exists but isn't a directory
  */
 int mk_default_dir(char *path) {
-	char *notdirerr = "%s exists but is not a directory.\n";
-	char *othererr = "Error creating %s";
-	char *play_anyway =
+    char *notdirerr = "%s exists but is not a directory.\n";
+    char *othererr = "Error creating %s";
+    char *play_anyway =
 "Can't write high scores to default target\nfile or read default keyfile.\n"
 "Play anyway? [y/n]";
-	char reply;
-	struct stat buf;
-	int statret;
-	int mkdirret;
+    char reply;
+    struct stat buf;
+    int statret;
+    int mkdirret;
 
-	/* Get status for path */
-	statret = stat(path, &buf);
+    /* Get status for path */
+    statret = stat(path, &buf);
 
-	/* Check status for path and take action */
-	if (statret == -1) {
-		/* Create directory */
-		mkdirret = mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		if (mkdirret == 0) {
-			/* Directory successfully created, return to caller */
-			return 0;
-		}
-		/* mkdir() failed */
-		error(0, 0, othererr, path);
-	} else if (S_ISDIR(buf.st_mode)) {
-		/* Directory exists, do nothing */
-		return 0;
-	} else {
-		/* path exists but is not a directory. */
-		error(0, 0, notdirerr, path);
-	}
-	/* Can't use default dir. Ask user if he want's to play anyway */
-	while (1) {
-		puts(play_anyway);
-		reply = getchar();
-		if (reply == 'n')
-			exit(0);
-		if (reply == 'y')
-			break;
-	}
-	return 1;
+    /* Check status for path and take action */
+    if (statret == -1) {
+        /* Create directory */
+        mkdirret = mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if (mkdirret == 0) {
+            /* Directory successfully created, return to caller */
+            return 0;
+        }
+        /* mkdir() failed */
+        error(0, 0, othererr, path);
+    } else if (S_ISDIR(buf.st_mode)) {
+        /* Directory exists, do nothing */
+        return 0;
+    } else {
+        /* path exists but is not a directory. */
+        error(0, 0, notdirerr, path);
+    }
+    /* Can't use default dir. Ask user if he want's to play anyway */
+    while (1) {
+        puts(play_anyway);
+        reply = getchar();
+        if (reply == 'n')
+            exit(0);
+        if (reply == 'y')
+            break;
+    }
+    return 1;
 }
